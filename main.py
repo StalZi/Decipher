@@ -110,10 +110,13 @@ def checkRot(event):
 
 
 def decipher():
+
+    label.place_forget()
+
     if cipherEntry.get() != "":
 
         if dropdownCipher.get() == "Цезарь":
-            after_dec(caesar_dec(dropdownLanguage.get(), dropdownRots.get(), cipherEntry.get()))
+            after_dec(caesar_dec(dropdownLanguage.get(), cipherEntry.get(), dropdownRots.get()))
 
         elif dropdownCipher.get() == "Виженер":
             after_dec(vigenere_dec(cipherEntry.get(),dropdownLanguage.get(),keyEntry.get()))
@@ -121,10 +124,45 @@ def decipher():
 
 def after_dec(deciphed):
 
-    label.configure(text=deciphed)
-    label.place(in_=button,relx=-1.0,rely=0,x=0,y=100)
+    if isinstance(deciphed, list):
+        if dropdownCipher.get() == "Цезарь":
+            if dropdownLanguage.get() == "Русский" or dropdownLanguage.get() == "Все, что ниже":
+                temp_rots = 33
 
-    copy_button.pack(anchor=SE)
+            else:
+                temp_rots = 26
+
+            for i in range(1, temp_rots):
+        
+                after_dec.rot_label = CTkLabel(window,
+                         text=f"Rot {i} = {deciphed[i - 1]}",
+                         font=("Ariel", 14),
+                         wraplength=450)
+                
+                after_dec.rot_label.pack(anchor=NW)
+
+                copy_button.place(in_=after_dec.rot_label,relx=1.1,rely=0.9,x=30,y=0)
+
+        elif dropdownCipher.get() == "Виженер":
+
+            rot_label1 = CTkLabel(window,
+                                 text=f"Rot 0 = {deciphed[0]}",
+                                 font=("Ariel", 14),
+                                 wraplength=450)
+            rot_label1.pack()
+
+            rot_label2 = CTkLabel(window,
+                                 text=f"Rot 1 = {deciphed[1]}",
+                                 font=("Ariel", 14),
+                                 wraplength=450)
+            rot_label2.pack()
+
+    else:
+
+        label.configure(text=deciphed)
+        label.place(in_=button,relx=-1.0,rely=0,x=0,y=100)
+
+        copy_button.pack(anchor=SE)
 
     window.update()
 
