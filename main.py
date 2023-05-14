@@ -1,6 +1,7 @@
 from customtkinter import *
 from caesar_file import *
 from vigenere_file import *
+from tkinter import Entry as tkEntry
 
 
 set_appearance_mode("dark")
@@ -103,7 +104,7 @@ def decipher(*event):
 
 def after_dec(deciphed:str) -> str:
 
-    global rot_label, vg_rot_label0, vg_rot_label1, rot_labels, temp_rots
+    global rot_label, vg_rot_label0, vg_rot_label1, rot_labels
 
     if isinstance(deciphed, list):
 
@@ -114,29 +115,42 @@ def after_dec(deciphed:str) -> str:
 
             for i in range(len(deciphed)):
         
-                rot_label = CTkLabel(rotsFrame,
-                         text=f"Rot {i + 1} = {deciphed[i]}",
-                         font=("Ariel", 20),
-                         wraplength=450)
+                rot_label = tkEntry(rotsFrame,
+                                     font=("Ariel", 20),
+                                     width=450,
+                                     foreground="white",
+                                     border=0,
+                                     readonlybackground="#1c1c1c")
                 
-                rot_label.pack(anchor=NW)
-
-                copy_button.place(in_=rot_label,relx=1.1,rely=0.9,x=30,y=0)
+                rot_label.insert(0, f"Rot {i + 1} = {deciphed[i]}")
+                rot_label.configure(state="readonly")
+                rot_label.pack(anchor=NW, pady=5)
 
                 rot_labels.append(rot_label)
 
         elif dropdownCipher.get() == "Виженер":
 
-            vg_rot_label0 = CTkLabel(rotsFrame,
-                                 text=f"Rot 0 = {deciphed[0]}",
-                                 font=("Ariel", 26),
-                                 wraplength=450)
+            vg_rot_label0 = tkEntry(rotsFrame,
+                                    font=("Ariel", 26),
+                                    width=450,
+                                    foreground="white",
+                                    border=0,
+                                    readonlybackground="#1c1c1c")
+            
+            vg_rot_label0(0, f"Rot 0 = {deciphed[0]}")
+            vg_rot_label0(state="readonly")
             vg_rot_label0.pack(anchor=NW, pady=30)
 
-            vg_rot_label1 = CTkLabel(rotsFrame,
-                                 text=f"Rot 1 = {deciphed[1]}",
-                                 font=("Ariel", 26),
-                                 wraplength=450)
+
+            vg_rot_label1 = tkEntry(rotsFrame,
+                                    font=("Ariel", 26),
+                                    width=450,
+                                    foreground="white",
+                                    border=0,
+                                    readonlybackground="#1c1c1c")
+            
+            vg_rot_label1(0, f"Rot 1 = {deciphed[1]}")
+            vg_rot_label1(state="readonly")
             vg_rot_label1.pack(anchor=NW, pady=30)
 
 
