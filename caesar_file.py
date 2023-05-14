@@ -3,7 +3,7 @@ alphabetRU = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя
 alphabetEN = "abcdefghijklmnopqrstuvwxyz"
 
 def caesarALL(value:str, rot:int) -> str:
-    print(value + ", " + str(rot))
+
     result = ""
     increment = 0
 
@@ -92,7 +92,6 @@ def caesar_dec(language:str, value:str, rot:str) -> str:
 
                 resultall.append(caesarALL(value, i))
 
-            print(resultall)
             return resultall
         
         else:
@@ -107,7 +106,6 @@ def caesar_dec(language:str, value:str, rot:str) -> str:
 
                 resultall.append(caesarRU(value, i))
 
-            print(resultall)
             return resultall
         
         else:
@@ -123,7 +121,6 @@ def caesar_dec(language:str, value:str, rot:str) -> str:
 
                 resultall.append(caesarEN(value, i))
 
-            print(resultall)
             return resultall
 
         else:

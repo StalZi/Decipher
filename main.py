@@ -5,8 +5,9 @@ from time import sleep
 from caesar_file import *
 from vigenere_file import *
 from atbash_file import *
+from playfair_file import *
 
-VERSION = "1.1"
+VERSION = "1.2"
 
 set_appearance_mode("dark")
 set_default_color_theme("green")
@@ -34,8 +35,12 @@ def check(event):
     dropdownLanguage.configure(state=NORMAL)
 
     if event == "Цезарь":
+
         if dropdownRots.get() == "ROT?":
             button.configure(state=DISABLED)
+
+        if dropdownLanguage.get() != "Язык?":
+            dropdownRots.configure(state=NORMAL)
 
         keyEntry.grid_forget()
         dropdownLanguage.configure(values=whatLang)
@@ -50,13 +55,26 @@ def check(event):
 
         dropdownLanguage.configure(values=whatLang)
 
+    elif event == "Плейфер":
+
+        dropdownRots.grid_forget()
+        dropdownLanguage.set("English")
+        dropdownLanguage.configure(state=DISABLED)
+        button.configure(state=NORMAL)
+
+        keyEntry.grid(row=1,column=1,pady=8)
+
     elif event == "Виженер":
+
         if dropdownRots.get() == "ROT?":
             button.configure(state=DISABLED)
             
         if dropdownLanguage.get() == "Все, что ниже":
             dropdownLanguage.set("Язык?")
             dropdownRots.configure(state=DISABLED)
+
+        else:
+            dropdownRots.configure(state=NORMAL)
         
         if dropdownRots.get() != "0" and dropdownRots.get() != "1" and dropdownRots.get() != "All":
             dropdownRots.set("ROT?")
@@ -144,10 +162,19 @@ def decipher(*event):
             after_dec(caesar_dec(dropdownLanguage.get(), cipherEntry.get(), dropdownRots.get()))
 
         elif dropdownCipher.get() == "Виженер" and keyEntry.get() != "":
-            after_dec(vigenere_dec(dropdownLanguage.get(), cipherEntry.get(), keyEntry.get(), dropdownRots.get()))
+            try:
+                after_dec(vigenere_dec(dropdownLanguage.get(), cipherEntry.get(), keyEntry.get(), dropdownRots.get()))
+            except:
+                after_dec("Bad symbols in the entry")
 
         elif dropdownCipher.get() == "Атбаш":
             after_dec(atbash_dec(dropdownLanguage.get(), cipherEntry.get()))
+
+        elif dropdownCipher.get() == "Плейфер" and keyEntry.get() != "":
+            try:
+                after_dec(playfair_dec(cipherEntry.get(), keyEntry.get()))
+            except:
+                after_dec("Bad symbols (!, ?, ., etc.) or the key is incorrect")
 
         else:
             return
@@ -255,7 +282,8 @@ window.resizable(False, True)
 options = [
     "Цезарь",
     "Виженер",
-    "Атбаш"
+    "Атбаш",
+    "Плейфер"
 ]
 whatLang = [
     "Все, что ниже",

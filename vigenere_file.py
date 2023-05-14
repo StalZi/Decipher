@@ -16,12 +16,10 @@ def vigenereRU(split_encrypted, key):
             i = 0
 
             for letter in each_split:
-                try:
-                    number = (l2iRU[letter] - l2iRU[key[i]]) % len(alphabetRU)
-                    decrypted += i2lRU[number]
-                except:
-                    decrypted = "Bad symbols in the entry"
-                    return decrypted
+
+                number = (l2iRU[letter] - l2iRU[key[i]]) % len(alphabetRU)
+                decrypted += i2lRU[number]
+                
                 i += 1
 
     return decrypted
@@ -34,12 +32,10 @@ def vigenereEN(split_encrypted, key):
             i = 0
 
             for letter in each_split:
-                try:
-                    number = (l2iEN[letter] - l2iEN[key[i]]) % len(alphabetEN)
-                    decrypted += i2lEN[number]
-                except:
-                    decrypted = "Bad symbols in the entry"
-                    return decrypted
+
+                number = (l2iEN[letter] - l2iEN[key[i]]) % len(alphabetEN)
+                decrypted += i2lEN[number]
+
                 i += 1
 
     return decrypted
