@@ -10,67 +10,30 @@ set_default_color_theme("green")
 def check(event):
 
     if event == "Цезарь":
+
+        keyEntry.grid_forget()
         dropdownLanguage.configure(values=whatCaesar)
 
-        if dropdownLanguage.get() == "Язык?" and dropdownRots.get() == "ROT?":
-
-            dropdownLanguage.configure(values=whatCaesar)
-            dropdownLanguage.grid(row=0,column=1,padx=15,pady=20)
-            dropdownRots.grid(row=0,column=2,padx=15,pady=20)
-            keyEntry.grid_forget()
-
-            window.update()
-
-            return
-
-        elif dropdownLanguage.get() != "Язык?":
-            if dropdownLanguage.get() == "Русский":
-                dropdownRots.configure(values=RotsRU)
-            else:
-                dropdownRots.configure(values=RotsEN)
-
-            keyEntry.grid_forget()
-            window.update()
-
-            return
-            
-        keyEntry.grid_forget()
-        window.update()
-
-        return
-
     elif event == "Виженер":
-        if dropdownLanguage.get() == "Язык?" and dropdownRots.get() == "ROT?":
 
-            dropdownLanguage.configure(values=whatVigenere)
-            dropdownLanguage.grid(row=0,column=1,padx=15,pady=20)
-            dropdownRots.grid(row=0,column=2,padx=15,pady=20)
-            keyEntry.grid(row=1,column=1,pady=8)
+        if dropdownLanguage.get() == "Все, что ниже":
+            dropdownLanguage.set("Язык?")
+            dropdownRots.configure(state=DISABLED)
+        
+        if dropdownRots.get() != "0" and dropdownRots.get() != "1" and dropdownRots.get() != "All":
+            dropdownRots.set("ROT?")
+            button.configure(state=DISABLED)
 
-            window.update
-
-            return
-
-        elif (dropdownRots.get() != "0" and dropdownRots.get() != "1" and dropdownRots.get() != "All") or dropdownLanguage.get() == "Все, что ниже":
-
-            if dropdownRots.get() != "0" and dropdownRots.get() != "1" and dropdownRots.get() != "All":
-                dropdownRots.set("ROT?")
-
-            if dropdownLanguage.get() == "Все, что ниже":
-                dropdownLanguage.set("Язык?")
-
-            dropdownRots.configure(values=RotsVG)
-            dropdownLanguage.configure(values=whatVigenere)
-            keyEntry.grid(row=1,column=1,pady=8)
-
-            window.update
-
-            return
-
+        dropdownLanguage.configure(values=whatVigenere)
+        dropdownRots.configure(values=RotsVG)
         keyEntry.grid(row=1,column=1,pady=8)
-        window.update
 
-        return
+    
+    dropdownLanguage.configure(state=NORMAL)
+
+    window.update()
+
+    return
 
 
 def checkLanguage(event):
@@ -85,10 +48,7 @@ def checkLanguage(event):
         window.update()
         return
 
-    elif event == "Все, что ниже":
-        dropdownRots.configure(values=RotsRU)
-
-    elif event == "Русский":
+    elif event == "Все, что ниже" or event == "Русский":
         dropdownRots.configure(values=RotsRU)
 
     elif event == "English":
@@ -248,14 +208,17 @@ dropdownCipher.grid(row=0,column=0,padx=10,pady=20)
 
 dropdownLanguage = CTkOptionMenu(frame,
                          values=None,
-                         command=checkLanguage)
+                         command=checkLanguage,
+                         state=DISABLED)
 dropdownLanguage.set("Язык?")
+dropdownLanguage.grid(row=0,column=1,padx=15,pady=20)
 
 dropdownRots = CTkOptionMenu(frame,
                          values=None,
                          command=checkRot,
                          state=DISABLED)
 dropdownRots.set("ROT?")
+dropdownRots.grid(row=0,column=2,padx=15,pady=20)
 
 keyEntry = CTkEntry(frame,
                     font=("Arial",15),
