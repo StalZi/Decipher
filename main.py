@@ -1,22 +1,59 @@
 from customtkinter import *
+from tkinter import Entry as tkEntry
+from time import sleep
+
 from caesar_file import *
 from vigenere_file import *
-from tkinter import Entry as tkEntry
+from atbash_file import *
 
+VERSION = "1.1"
 
 set_appearance_mode("dark")
 set_default_color_theme("green")
+def rotsAnimation():
 
+    fakeDropdownRots.place(x=345,y=40)
+
+    i = 37
+    while i < 52:
+
+        fakeDropdownRots.place_configure(x=345,y=i)
+
+        window.update()
+        sleep(0.003)
+        i +=1
+
+    del(i)
+
+    fakeDropdownRots.place_forget()
+    dropdownRots.grid(row=0,column=2,padx=15,pady=20)
+
+    window.update()
 
 def check(event):
+    dropdownLanguage.configure(state=NORMAL)
 
     if event == "Цезарь":
+        if dropdownRots.get() == "ROT?":
+            button.configure(state=DISABLED)
 
         keyEntry.grid_forget()
-        dropdownLanguage.configure(values=whatCaesar)
+        dropdownLanguage.configure(values=whatLang)
+
+        if not dropdownRots.winfo_ismapped():
+            rotsAnimation()
+
+    elif event == "Атбаш":
+
+        dropdownRots.grid_forget()
+        keyEntry.grid_forget()
+
+        dropdownLanguage.configure(values=whatLang)
 
     elif event == "Виженер":
-
+        if dropdownRots.get() == "ROT?":
+            button.configure(state=DISABLED)
+            
         if dropdownLanguage.get() == "Все, что ниже":
             dropdownLanguage.set("Язык?")
             dropdownRots.configure(state=DISABLED)
@@ -25,12 +62,13 @@ def check(event):
             dropdownRots.set("ROT?")
             button.configure(state=DISABLED)
 
-        dropdownLanguage.configure(values=whatVigenere)
+        dropdownLanguage.configure(values=whatLangVigenere)
         dropdownRots.configure(values=RotsVG)
+        
         keyEntry.grid(row=1,column=1,pady=8)
 
-    
-    dropdownLanguage.configure(state=NORMAL)
+        if not dropdownRots.winfo_ismapped():
+            rotsAnimation()
 
     window.update()
 
@@ -43,21 +81,32 @@ def checkLanguage(event):
     global RotsRU
 
     if dropdownCipher.get() == "Виженер":
+
         dropdownRots.configure(values=RotsVG)
         dropdownRots.configure(state=NORMAL)
 
         window.update()
         return
+    
+    elif dropdownCipher.get() == "Цезарь":
 
-    elif event == "Все, что ниже" or event == "Русский":
-        dropdownRots.configure(values=RotsRU)
+        if event == "Все, что ниже" or event == "Русский":
+            dropdownRots.configure(values=RotsRU)
 
-    elif event == "English":
-        dropdownRots.configure(values=RotsEN)
+        elif event == "English":
+            dropdownRots.configure(values=RotsEN)
 
-    dropdownRots.configure(state=NORMAL)
+        dropdownRots.configure(state=NORMAL)
 
-    window.update()
+        window.update()
+        return
+
+    elif dropdownCipher.get() == "Атбаш":
+
+        button.configure(state=NORMAL)
+
+        window.update()
+        return
 
 
 def checkRot(event):
@@ -71,9 +120,6 @@ def decipher(*event):
     
     try:
         label.place_forget()
-    except:
-        pass
-    try:
         copy_button.place_forget()
     except:
         pass
@@ -82,6 +128,11 @@ def decipher(*event):
         for widget in rot_labels:
             widget.pack_forget()
         del(temp_rots)
+    except:
+        pass
+    try:
+        label_backup.pack_forget()
+        copy_button_backup.place_forget()
     except:
         pass
 
@@ -95,6 +146,9 @@ def decipher(*event):
         elif dropdownCipher.get() == "Виженер" and keyEntry.get() != "":
             after_dec(vigenere_dec(dropdownLanguage.get(), cipherEntry.get(), keyEntry.get(), dropdownRots.get()))
 
+        elif dropdownCipher.get() == "Атбаш":
+            after_dec(atbash_dec(dropdownLanguage.get(), cipherEntry.get()))
+
         else:
             return
 
@@ -104,7 +158,7 @@ def decipher(*event):
 
 def after_dec(deciphed:str) -> str:
 
-    global rot_label, vg_rot_label0, vg_rot_label1, rot_labels
+    global rot_label, vg_rot_label0, vg_rot_label1, rot_labels, copy_button_backup, label_backup
 
     if isinstance(deciphed, list):
 
@@ -155,11 +209,29 @@ def after_dec(deciphed:str) -> str:
 
 
     else:
+        if len(deciphed) > 126:
+            rotsFrame.place(x=0,y=240)
 
-        label.configure(text=deciphed)
-        label.place(in_=button,relx=-1.0,rely=0,x=0,y=100)
+            label_backup = CTkLabel(rotsFrame,
+                                  font=("Ariel", 40),
+                                  wraplength=420,
+                                  width=420,
+                                  compound=CENTER)
+            
+            copy_button_backup = CTkButton(window,
+                                         text="Copy",
+                                         width=20,
+                                         command=copy)
 
-        copy_button.place(in_=label,relx=0.9,rely=0.8,x=30,y=0)
+            label_backup.configure(text=deciphed)
+            label_backup.pack(side=TOP)
+            copy_button_backup.place(x=500,y=500)
+
+        else:
+            label.configure(text=deciphed)
+            label.place(in_=button,relx=-1.0,rely=0,x=0,y=100)
+
+            copy_button.place(in_=label,relx=1.0,rely=0.8,x=10,y=0)
 
     window.update()
 
@@ -173,7 +245,7 @@ def copy():
 # ---------------------------------------
 
 window = CTk()
-window.title("Decipher by StalZi 1.0")
+window.title(f"Decipher by StalZi {VERSION}")
 window.geometry("800x600")
 window.resizable(False, True)
 
@@ -182,15 +254,16 @@ window.resizable(False, True)
 
 options = [
     "Цезарь",
-    "Виженер"
+    "Виженер",
+    "Атбаш"
 ]
-whatCaesar = [
+whatLang = [
     "Все, что ниже",
     "Русский",
     "English"
 ]
 
-whatVigenere = [
+whatLangVigenere = [
     "Русский",
     "English"
 ]
@@ -227,12 +300,17 @@ dropdownLanguage = CTkOptionMenu(frame,
 dropdownLanguage.set("Язык?")
 dropdownLanguage.grid(row=0,column=1,padx=15,pady=20)
 
+fakeDropdownRots = CTkOptionMenu(window,
+                         values=None,
+                         command=checkRot,
+                         state=DISABLED)
+fakeDropdownRots.set("ROT?")
+
 dropdownRots = CTkOptionMenu(frame,
                          values=None,
                          command=checkRot,
                          state=DISABLED)
 dropdownRots.set("ROT?")
-dropdownRots.grid(row=0,column=2,padx=15,pady=20)
 
 keyEntry = CTkEntry(frame,
                     font=("Arial",15),
@@ -256,8 +334,8 @@ window.bind("<Return>", decipher)
 
 label = CTkLabel(window,
                  font=("Ariel", 40),
-                 wraplength=450,
-                 width=450,
+                 wraplength=420,
+                 width=420,
                  compound=CENTER)
 
 copy_button = CTkButton(window,
