@@ -8,9 +8,6 @@ set_default_color_theme("green")
 
 
 def check(event):
-    print(dropdownCipher.get())
-    print(event)
-
 
     if event == "Цезарь":
         dropdownLanguage.configure(values=whatCaesar)
@@ -77,7 +74,6 @@ def check(event):
 
 
 def checkLanguage(event):
-    print(event)
 
     global RotsEN
     global RotsRU
@@ -104,65 +100,92 @@ def checkLanguage(event):
 
 
 def checkRot(event):
-    print(event)
 
     button.configure(state=NORMAL)
 
 
-def decipher():
+def decipher(*event):
+    if button.cget('state') == DISABLED:
+        return
+    
+    try:
+        label.place_forget()
+    except:
+        pass
+    try:
+        copy_button.place_forget()
+    except:
+        pass
+    try:
+        rotsFrame.place_forget()
+        for widget in rot_labels:
+            widget.pack_forget()
+        del(temp_rots)
+    except:
+        pass
 
-    label.place_forget()
+    window.update()
 
     if cipherEntry.get() != "":
 
         if dropdownCipher.get() == "Цезарь":
             after_dec(caesar_dec(dropdownLanguage.get(), cipherEntry.get(), dropdownRots.get()))
 
-        elif dropdownCipher.get() == "Виженер":
-            after_dec(vigenere_dec(cipherEntry.get(),dropdownLanguage.get(),keyEntry.get()))
+        elif dropdownCipher.get() == "Виженер" and keyEntry.get() != "":
+            after_dec(vigenere_dec(dropdownLanguage.get(), cipherEntry.get(), keyEntry.get(), dropdownRots.get()))
+
+        else:
+            return
+
+    else:
+        return
 
 
-def after_dec(deciphed):
+def after_dec(deciphed:str) -> str:
+
+    global rot_label, vg_rot_label0, vg_rot_label1, rot_labels, temp_rots
 
     if isinstance(deciphed, list):
+
+        rotsFrame.place(x=0,y=240)
+
         if dropdownCipher.get() == "Цезарь":
-            if dropdownLanguage.get() == "Русский" or dropdownLanguage.get() == "Все, что ниже":
-                temp_rots = 33
+            rot_labels = []
 
-            else:
-                temp_rots = 26
-
-            for i in range(1, temp_rots):
+            for i in range(len(deciphed)):
         
-                after_dec.rot_label = CTkLabel(window,
-                         text=f"Rot {i} = {deciphed[i - 1]}",
-                         font=("Ariel", 14),
+                rot_label = CTkLabel(rotsFrame,
+                         text=f"Rot {i + 1} = {deciphed[i]}",
+                         font=("Ariel", 20),
                          wraplength=450)
                 
-                after_dec.rot_label.pack(anchor=NW)
+                rot_label.pack(anchor=NW)
 
-                copy_button.place(in_=after_dec.rot_label,relx=1.1,rely=0.9,x=30,y=0)
+                copy_button.place(in_=rot_label,relx=1.1,rely=0.9,x=30,y=0)
+
+                rot_labels.append(rot_label)
 
         elif dropdownCipher.get() == "Виженер":
 
-            rot_label1 = CTkLabel(window,
+            vg_rot_label0 = CTkLabel(rotsFrame,
                                  text=f"Rot 0 = {deciphed[0]}",
-                                 font=("Ariel", 14),
+                                 font=("Ariel", 26),
                                  wraplength=450)
-            rot_label1.pack()
+            vg_rot_label0.pack(anchor=NW, pady=30)
 
-            rot_label2 = CTkLabel(window,
+            vg_rot_label1 = CTkLabel(rotsFrame,
                                  text=f"Rot 1 = {deciphed[1]}",
-                                 font=("Ariel", 14),
+                                 font=("Ariel", 26),
                                  wraplength=450)
-            rot_label2.pack()
+            vg_rot_label1.pack(anchor=NW, pady=30)
+
 
     else:
 
         label.configure(text=deciphed)
         label.place(in_=button,relx=-1.0,rely=0,x=0,y=100)
 
-        copy_button.pack(anchor=SE)
+        copy_button.place(in_=label,relx=0.9,rely=0.8,x=30,y=0)
 
     window.update()
 
@@ -239,6 +262,11 @@ keyEntry = CTkEntry(frame,
                     width=150,
                     placeholder_text="Key")
 
+rotsFrame = CTkScrollableFrame(window,
+                     width=475,
+                     height=330,
+                     fg_color="#1c1c1c")
+
 button = CTkButton(window,
                    text="Дешифровать",
                    font=("Arial",20),
@@ -246,11 +274,14 @@ button = CTkButton(window,
                    state=DISABLED,
                    width=150,
                    height=50)
-button.place(x=170,y=125)
+button.place(x=170,y=175)
+window.bind("<Return>", decipher)
 
 label = CTkLabel(window,
                  font=("Ariel", 40),
-                 wraplength=450)
+                 wraplength=450,
+                 width=450,
+                 compound=CENTER)
 
 copy_button = CTkButton(window,
                         text="Copy",
@@ -262,6 +293,5 @@ notes = CTkTextbox(window,
                  width=300,
                  height=400)
 notes.place(x=500,y=0)
-
 
 window.mainloop()

@@ -2,23 +2,53 @@
 alphabetRU = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
 alphabetEN = "abcdefghijklmnopqrstuvwxyz"
 
-def caesarALL(value:str, rot:str|int) -> str:
+def caesarALL(value:str, rot:int) -> str:
+    print(value + ", " + str(rot))
+    result = ""
+    increment = 0
+
+    for i in range(len(value)):
+            print(i)
+            if value[i] in alphabetRU:
+                result += alphabetRU[alphabetRU.find(value[i]) - rot]
+
+            elif value[i] in alphabetRU.upper():
+                result += alphabetRU.upper()[alphabetRU.upper().find(value[i]) - rot]
+
+            elif value.lower()[i] in alphabetEN:
+                while True:
+                    try:
+                        result += alphabetEN[alphabetEN.find(value[i]) - rot + increment]
+                        break
+                    except:
+                        increment += 26
+                    
+
+            elif value[i] in alphabetEN.upper():
+                while True:
+                    try:
+                        result += alphabetEN.upper()[alphabetEN.upper().find(value[i]) - rot + increment]
+                        break
+                    except:
+                        increment += 26
+
+            else:
+                result += value[i]
+
+    return result
+
+
+def caesarRU(value:str, rot:int) -> str:
 
     result = ""
 
     for i in range(len(value)):
-                
+
         if value[i] in alphabetRU:
             result += alphabetRU[alphabetRU.find(value[i]) - rot]
 
         elif value[i] in alphabetRU.upper():
             result += alphabetRU.upper()[alphabetRU.upper().find(value[i]) - rot]
-
-        elif value.lower()[i] in alphabetEN:
-            result += alphabetEN[alphabetEN.find(value.lower()[i]) - rot]
-
-        elif value[i] in alphabetEN.upper():
-            result += alphabetEN.upper()[alphabetEN.upper().find(value[i]) - rot]
 
         else:
             result += value[i]
@@ -26,25 +56,7 @@ def caesarALL(value:str, rot:str|int) -> str:
     return result
 
 
-def caesarRU(value:str, rot:str|int) -> str:
-
-    result = ""
-
-    for i in range(len(value)):
-
-        if value[i] in alphabetRU:
-            result += alphabetRU[alphabetRU.find(value[i]) - rot]
-
-        elif value[i] in alphabetRU.upper():
-            result += alphabetRU.upper()[alphabetRU.upper().find(value[i]) - rot]
-
-        else:
-            result += value[i]
-
-    return result
-
-
-def caesarEN(value:str, rot:str|int) -> str:
+def caesarEN(value:str, rot:int) -> str:
 
     result = ""
 
@@ -76,7 +88,7 @@ def caesar_dec(language:str, value:str, rot:str) -> str:
 
         if rot == "All":
 
-            for i in range(1, len(alphabetEN)):
+            for i in range(1, 33):
 
                 resultall.append(caesarALL(value, i))
 
