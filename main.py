@@ -3,6 +3,7 @@ from tkinter import Entry as tkEntry
 from time import sleep
 
 from options import *
+from char_lim import *
 
 from caesar_file import caesar_dec
 from vigenere_file import vigenere_dec
@@ -16,100 +17,121 @@ VERSION = "1.4"
 
 set_appearance_mode("dark")
 set_default_color_theme("green")
-def rotsAnimation():
 
-    fakeDropdownRots.place(x=345,y=40)
-
-    i = 37
-    while i < 52:
-
-        fakeDropdownRots.place_configure(x=345,y=i)
-
-        window.update()
-        sleep(0.003)
-        i +=1
-
-    del(i)
-
-    fakeDropdownRots.place_forget()
-    dropdownRots.grid(row=0,column=2,padx=15,pady=20)
-
-    window.update()
 
 def check(event):
+    global keyText_trace_id
+
     dropdownLanguage.configure(state=NORMAL)
+    checkboxVar.set(0)
+    checkbox.place_forget()
+    try:
+        keyText.trace_vdelete("w", keyText_trace_id)
+    except:
+        pass
 
-    if event == "Цезарь":
+    if matrix_title.winfo_exists():
 
-        if dropdownRots.get() == "ROT?":
-            button.configure(state=DISABLED)
+        matrix_title.place_forget()
+        matrix_label.place_forget()
 
-        if dropdownLanguage.get() != "Язык?":
-            dropdownRots.configure(state=NORMAL)
-            if dropdownLanguage.get() == "Russian" or dropdownLanguage.get() == "Все, что ниже":
-                dropdownRots.configure(values=RotsRU)
-            else:
-                dropdownRots.configure(values=RotsEN)
+        matrix1.place_forget()
+        matrix2.place_forget()
+        matrix3.place_forget()
+        matrix4.place_forget()
 
-        keyEntry.grid_forget()
-        dropdownLanguage.configure(values=whatLang)
+    match event:
+        case "Цезарь":
 
-        if not dropdownRots.winfo_ismapped():
-            rotsAnimation()
+            if dropdownRots.get() == "ROT?":
+                button.configure(state=DISABLED)
 
-    elif event == "Атбаш" or event == "A1Z26":
-        if dropdownLanguage.get() != "Язык?":
+            if dropdownLanguage.get() != "Язык?":
+                dropdownRots.configure(state=NORMAL)
+                if dropdownLanguage.get() == "Russian" or dropdownLanguage.get() == "Все, что ниже":
+                    dropdownRots.configure(values=RotsRU)
+                else:
+                    dropdownRots.configure(values=RotsEN)
+
+            keyEntry.grid_forget()
+            dropdownLanguage.configure(values=whatLang)
+
+            dropdownLanguage.grid(row=0,column=1,padx=15,pady=20)
+            dropdownRots.grid(row=0,column=2,padx=15,pady=20)
+
+        case "Атбаш" | "A1Z26":
+
+            if dropdownLanguage.get() != "Язык?":
+                button.configure(state=NORMAL)
+
+            dropdownRots.grid_forget()
+            keyEntry.grid_forget()
+
+
+            dropdownLanguage.grid(row=0,column=1)
+            dropdownLanguage.configure(values=whatLang)
+
+        case "Рейл":
             button.configure(state=NORMAL)
 
-        dropdownRots.grid_forget()
-        keyEntry.grid_forget()
+            dropdownLanguage.grid_forget()
+            dropdownRots.grid_forget()
+            keyEntry.grid_forget()
 
-        dropdownLanguage.configure(values=whatLang)
+            keyEntry.configure(width=100)
+            keyEntry.grid(row=0,column=1,padx=10,pady=20)
 
-    elif event == "Рейл":
+            keyText_trace_id = keyText.trace("w", lambda *args: character_limit3(keyText))
 
-        dropdownLanguage.grid_forget()
-        dropdownRots.grid_forget()
-        keyEntry.grid_forget()
+            checkbox.place(in_=keyEntry,relx=1.0,rely=0,x=10,y=0)
+        
+        case "Плейфер":
 
-        keyEntry.configure(placeholder_text="Рельс? (Число)",
-                           width=30)
-        keyEntry.grid(row=0,column=1,padx=10,pady=20)
+            dropdownRots.grid_forget()
+            dropdownLanguage.set("English")
+            dropdownLanguage.configure(state=DISABLED)
+            button.configure(state=NORMAL)
 
-        checkbox.place(in_=keyEntry,relx=1.0,rely=0.5,x=10,y=0)
+            keyEntry.grid(row=1,column=1,pady=8)
 
-    elif event == "Плейфер":
+        case "Виженер":
 
-        dropdownRots.grid_forget()
-        dropdownLanguage.set("English")
-        dropdownLanguage.configure(state=DISABLED)
-        button.configure(state=NORMAL)
-
-        keyEntry.grid(row=1,column=1,pady=8)
-
-    elif event == "Виженер":
-
-        if dropdownRots.get() == "ROT?":
-            button.configure(state=DISABLED)
+            if dropdownRots.get() == "ROT?":
+                button.configure(state=DISABLED)
             
-        if dropdownLanguage.get() == "Все, что ниже":
-            dropdownLanguage.set("Язык?")
-            dropdownRots.configure(state=DISABLED)
+            if dropdownLanguage.get() == "Все, что ниже":
+                dropdownLanguage.set("Язык?")
+                dropdownRots.configure(state=DISABLED)
 
-        else:
-            dropdownRots.configure(state=NORMAL)
-        
-        if dropdownRots.get() != "0" and dropdownRots.get() != "1" and dropdownRots.get() != "All":
-            dropdownRots.set("ROT?")
-            button.configure(state=DISABLED)
+            else:
+                dropdownRots.configure(state=NORMAL)
 
-        dropdownLanguage.configure(values=whatLangVigenere)
-        dropdownRots.configure(values=RotsVG)
-        
-        keyEntry.grid(row=1,column=1,pady=8)
+            if dropdownRots.get() != "0" and dropdownRots.get() != "1" and dropdownRots.get() != "All":
+                dropdownRots.set("ROT?")
+                button.configure(state=DISABLED)
 
-        if not dropdownRots.winfo_ismapped():
-            rotsAnimation()
+            dropdownLanguage.configure(values=whatLangVigenere)
+            dropdownRots.configure(values=RotsVG)
+
+            keyEntry.grid(row=1,column=1,pady=8)
+
+            dropdownRots.grid(row=0,column=2,padx=15,pady=20)
+            
+        case "Хилл":
+            button.configure(state=NORMAL)
+
+            dropdownLanguage.grid_forget()
+            dropdownRots.grid_forget()
+            keyEntry.grid_forget()
+
+            matrix_title.place(x=275,y=5)
+            matrix_label.place(x=205,y=32)
+
+            matrix1.place(x=222,y=32)
+            matrix2.place(x=272,y=32)
+            matrix3.place(x=330,y=32)
+            matrix4.place(x=380,y=32)
+
 
     window.update()
 
@@ -120,43 +142,45 @@ def checkLanguage(event):
 
     global RotsEN
     global RotsRU
-
-    if dropdownCipher.get() == "Виженер":
-
-        dropdownRots.configure(values=RotsVG)
-        dropdownRots.configure(state=NORMAL)
-
-        window.update()
-        return
     
-    elif dropdownCipher.get() == "Цезарь":
+    match dropdownCipher.get():
+        case "Виженер":
 
-        if event == "Все, что ниже" or event == "Русский":
-            dropdownRots.configure(values=RotsRU)
+            dropdownRots.configure(values=RotsVG)
+            dropdownRots.configure(state=NORMAL)
 
-        elif event == "English":
-            dropdownRots.configure(values=RotsEN)
+            window.update()
+            return
+        
+        case "Цезарь":
 
-        dropdownRots.configure(state=NORMAL)
+            if event == "Все, что ниже" or event == "Русский":
+                dropdownRots.configure(values=RotsRU)
 
-        window.update()
-        return
+            elif event == "English":
+                dropdownRots.configure(values=RotsEN)
 
-    elif dropdownCipher.get() == "Атбаш" or dropdownCipher.get() == "A1Z26":
+            dropdownRots.configure(state=NORMAL)
 
-        button.configure(state=NORMAL)
+            window.update()
+            return
+        
+        case "Атбаш" | "A1Z26":
 
-        window.update()
-        return
+            button.configure(state=NORMAL)
+
+            window.update()
+            return
 
 
 def checkRot(event):
 
     button.configure(state=NORMAL)
 
-def checkCheckbox(event):
+def checkCheckbox():
 
-    if event is True:
+    if checkboxVar.get() == 1:
+        keyEntry.delete(0, END)
         keyEntry.configure(state=DISABLED)
         
     else:
@@ -167,16 +191,14 @@ def decipher(*event):
     if button.cget('state') == DISABLED:
         return
     
+
+    label.place_forget()
+    copy_button.place_forget()
+    rotsFrame.place_forget()
+
     try:
-        label.place_forget()
-        copy_button.place_forget()
-    except:
-        pass
-    try:
-        rotsFrame.place_forget()
         for widget in rot_labels:
             widget.pack_forget()
-        del(temp_rots)
     except:
         pass
     try:
@@ -184,43 +206,65 @@ def decipher(*event):
     except:
         pass
 
-    window.update()
-
     if cipherEntry.get() != "":
 
-        if dropdownCipher.get() == "Цезарь":
-            after_dec(caesar_dec(dropdownLanguage.get(), cipherEntry.get(), dropdownRots.get()))
+        match dropdownCipher.get():
+            
+            case "Цезарь":
 
-        elif dropdownCipher.get() == "Виженер" and keyEntry.get() != "":
-            try:
-                after_dec(vigenere_dec(dropdownLanguage.get(), cipherEntry.get(), keyEntry.get(), dropdownRots.get()))
-            except:
-                after_dec("Bad symbols in the entry")
+                after_dec(caesar_dec(dropdownLanguage.get(), cipherEntry.get(), dropdownRots.get()))
 
-        elif dropdownCipher.get() == "Атбаш":
-            after_dec(atbash_dec(dropdownLanguage.get(), cipherEntry.get()))
+            case "Виженер" if keyText != "":
+                
+                try:
+                    after_dec(vigenere_dec(dropdownLanguage.get(), cipherEntry.get(), keyText.get(), dropdownRots.get()))
+                except:
+                    after_dec("Bad symbols in the entry")
 
-        elif dropdownCipher.get() == "Плейфер" and keyEntry.get() != "":
-            try:
-                after_dec(playfair_dec(cipherEntry.get(), keyEntry.get()))
-            except:
-                after_dec("Bad symbols (!, ?, ., etc.) or the key is incorrect")
+            case "Атбаш":
 
-        elif dropdownCipher.get() == "A1Z26":
-            try:
-                after_dec(a1z26_dec(dropdownLanguage.get(), cipherEntry.get()))
-            except:
-                after_dec("Bad symbols (should be 1-2-15-2-1, etc.)")
+                after_dec(atbash_dec(dropdownLanguage.get(), cipherEntry.get()))
 
-        elif dropdownCipher.get() == "Рейл":
-            try:
-                after_dec(rail_fence_dec(cipherEntry.get(), keyEntry.get()))
-            except:
-                after_dec("Bad symbols, the key should be an integer")
+            case "Плейфер" if keyText != "":
 
-        else:
-            return
+                try:
+                    after_dec(playfair_dec(cipherEntry.get(), keyText.get()))
+                except:
+                    after_dec("Bad symbols (!, ?, ., etc.) or the key is incorrect")
 
+            case "Плейфер" if keyText != "":
+
+                try:
+                    after_dec(playfair_dec(cipherEntry.get(), keyText.get()))
+                except:
+                    after_dec("Bad symbols (!, ?, ., etc.) or the key is incorrect")
+
+            case "A1Z26":
+
+                try:
+                    after_dec(a1z26_dec(dropdownLanguage.get(), cipherEntry.get()))
+                except:
+                    after_dec("Bad symbols (should be 1-2-15-2-1, etc.)")
+
+            case "Рейл" if keyText != "":
+
+                try:
+                    if checkboxVar.get() == 1:
+                        after_dec(rail_fence_dec(cipherEntry.get(), "All"))
+                    else:
+                        after_dec(rail_fence_dec(cipherEntry.get(), keyText.get()))
+                except:
+                    after_dec("Bad symbols, the key should be an integer")
+
+            case "Хилл" if matrix1 != "" and matrix2 != "" and matrix3 != "" and matrix4 != "":
+
+                try:
+                    after_dec(hill_dec(cipherEntry.get(),[[matrix_text1.get, matrix_text2],[matrix_text3, matrix_text4]]))
+                except:
+                    after_dec("Bad symbols (тут вообще пиздец, так что пишу на русском, возможные проблемы: Плохая матрица, спец символы в шифре(пробелы), длина шифра не квадрат числа)")
+
+            case _:
+                return
     else:
         return
 
@@ -229,8 +273,8 @@ def after_dec(deciphed:str) -> str:
 
     global rot_label, vg_rot_label0, vg_rot_label1, rot_labels, label_backup
 
-    if dropdownRots.get() == "All":
-
+    if dropdownRots.get() == "All" or checkboxVar.get() == 1:
+        print("here?")
         rotsFrame.place(x=0,y=240)
 
         if dropdownCipher.get() == "Цезарь" or dropdownCipher.get() == "Рейл":
@@ -294,10 +338,7 @@ def after_dec(deciphed:str) -> str:
                                   width=420,
                                   compound=CENTER)
             
-            try:
-                copy_button.place_forget()
-            except:
-                pass
+            copy_button.place_forget()
 
             label_backup.configure(text=("english - " + deciphed[0] + " and russian - " + deciphed[1]))
             label_backup.pack(side=TOP)
@@ -386,14 +427,67 @@ dropdownRots = CTkOptionMenu(frame,
                          state=DISABLED)
 dropdownRots.set("ROT?")
 
+checkboxVar = IntVar()
+
 checkbox = CTkCheckBox(frame,
+                       variable=checkboxVar,
                        text="All",
                        command=checkCheckbox)
 
+matrix_title = CTkLabel(frame,
+                        text="Матрица",
+                        font=("Ariel", 20),
+                        compound=CENTER)
+
+matrix_label = CTkLabel(frame,
+                        text="[[       ,       ],[       ,       ]]",
+                        font=("Ariel", 20),
+                        compound=CENTER)
+
+matrix_text1 = StringVar()
+matrix_text2 = StringVar()
+matrix_text3 = StringVar()
+matrix_text4 = StringVar()
+
+matrix1 = CTkEntry(frame,
+                    font=("Arial",15),
+                    textvariable=matrix_text1,
+                    width=30,
+                    placeholder_text="3")
+matrix1.insert(0, "3")
+
+matrix2 = CTkEntry(frame,
+                    font=("Arial",15),
+                    textvariable=matrix_text2,
+                    width=30,
+                    placeholder_text="3")
+matrix2.insert(0, "3")
+
+matrix3 = CTkEntry(frame,
+                    font=("Arial",15),
+                    textvariable=matrix_text3,
+                    width=30,
+                    placeholder_text="2")
+matrix3.insert(0, "2")
+
+matrix4 = CTkEntry(frame,
+                    font=("Arial",15),
+                    textvariable=matrix_text4,
+                    width=30,
+                    placeholder_text="5")
+matrix4.insert(0, "5")
+
+matrix_text1.trace("w", lambda *args: character_limit1(matrix_text1))
+matrix_text2.trace("w", lambda *args: character_limit1(matrix_text2))
+matrix_text3.trace("w", lambda *args: character_limit1(matrix_text3))
+matrix_text4.trace("w", lambda *args: character_limit1(matrix_text4))
+
+keyText = StringVar()
+
 keyEntry = CTkEntry(frame,
                     font=("Arial",15),
-                    width=150,
-                    placeholder_text="Key")
+                    textvariable=keyText,
+                    width=150)
 
 rotsFrame = CTkScrollableFrame(window,
                      width=475,
@@ -422,9 +516,10 @@ copy_button = CTkButton(window,
                         command=copy)
 
 notes = CTkTextbox(window,
-                 font=("Ariel", 30),
-                 width=300,
-                 height=400)
+                   placeholder_text="Notes",
+                   font=("Ariel", 30),
+                   width=300,
+                   height=400)
 notes.place(x=500,y=0)
 
 window.mainloop()
