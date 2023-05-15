@@ -2,12 +2,17 @@ from customtkinter import *
 from tkinter import Entry as tkEntry
 from time import sleep
 
-from caesar_file import *
-from vigenere_file import *
-from atbash_file import *
-from playfair_file import *
+from options import *
 
-VERSION = "1.2"
+from caesar_file import caesar_dec
+from vigenere_file import vigenere_dec
+from atbash_file import atbash_dec
+from playfair_file import playfair_dec
+from A1Z26_file import a1z26_dec
+from hill_file import hill_dec
+from rail_fence_file import rail_fence_dec
+
+VERSION = "1.4"
 
 set_appearance_mode("dark")
 set_default_color_theme("green")
@@ -41,6 +46,10 @@ def check(event):
 
         if dropdownLanguage.get() != "Язык?":
             dropdownRots.configure(state=NORMAL)
+            if dropdownLanguage.get() == "Russian" or dropdownLanguage.get() == "Все, что ниже":
+                dropdownRots.configure(values=RotsRU)
+            else:
+                dropdownRots.configure(values=RotsEN)
 
         keyEntry.grid_forget()
         dropdownLanguage.configure(values=whatLang)
@@ -48,12 +57,26 @@ def check(event):
         if not dropdownRots.winfo_ismapped():
             rotsAnimation()
 
-    elif event == "Атбаш":
+    elif event == "Атбаш" or event == "A1Z26":
+        if dropdownLanguage.get() != "Язык?":
+            button.configure(state=NORMAL)
 
         dropdownRots.grid_forget()
         keyEntry.grid_forget()
 
         dropdownLanguage.configure(values=whatLang)
+
+    elif event == "Рейл":
+
+        dropdownLanguage.grid_forget()
+        dropdownRots.grid_forget()
+        keyEntry.grid_forget()
+
+        keyEntry.configure(placeholder_text="Рельс? (Число)",
+                           width=30)
+        keyEntry.grid(row=0,column=1,padx=10,pady=20)
+
+        checkbox.place(in_=keyEntry,relx=1.0,rely=0.5,x=10,y=0)
 
     elif event == "Плейфер":
 
@@ -119,7 +142,7 @@ def checkLanguage(event):
         window.update()
         return
 
-    elif dropdownCipher.get() == "Атбаш":
+    elif dropdownCipher.get() == "Атбаш" or dropdownCipher.get() == "A1Z26":
 
         button.configure(state=NORMAL)
 
@@ -130,6 +153,14 @@ def checkLanguage(event):
 def checkRot(event):
 
     button.configure(state=NORMAL)
+
+def checkCheckbox(event):
+
+    if event is True:
+        keyEntry.configure(state=DISABLED)
+        
+    else:
+        keyEntry.configure(state=NORMAL)
 
 
 def decipher(*event):
@@ -150,7 +181,6 @@ def decipher(*event):
         pass
     try:
         label_backup.pack_forget()
-        copy_button_backup.place_forget()
     except:
         pass
 
@@ -176,6 +206,18 @@ def decipher(*event):
             except:
                 after_dec("Bad symbols (!, ?, ., etc.) or the key is incorrect")
 
+        elif dropdownCipher.get() == "A1Z26":
+            try:
+                after_dec(a1z26_dec(dropdownLanguage.get(), cipherEntry.get()))
+            except:
+                after_dec("Bad symbols (should be 1-2-15-2-1, etc.)")
+
+        elif dropdownCipher.get() == "Рейл":
+            try:
+                after_dec(rail_fence_dec(cipherEntry.get(), keyEntry.get()))
+            except:
+                after_dec("Bad symbols, the key should be an integer")
+
         else:
             return
 
@@ -185,25 +227,32 @@ def decipher(*event):
 
 def after_dec(deciphed:str) -> str:
 
-    global rot_label, vg_rot_label0, vg_rot_label1, rot_labels, copy_button_backup, label_backup
+    global rot_label, vg_rot_label0, vg_rot_label1, rot_labels, label_backup
 
-    if isinstance(deciphed, list):
+    if dropdownRots.get() == "All":
 
         rotsFrame.place(x=0,y=240)
 
-        if dropdownCipher.get() == "Цезарь":
+        if dropdownCipher.get() == "Цезарь" or dropdownCipher.get() == "Рейл":
             rot_labels = []
+
+            if dropdownCipher.get() == "Цезарь":
+                text = (0, f"Rot {i + 1} = {deciphed[i]}")
+
+            elif dropdownCipher.get() == "Рейл":
+                text = (0, f"Num {i + 1} = {deciphed[i]}")
 
             for i in range(len(deciphed)):
         
                 rot_label = tkEntry(rotsFrame,
-                                     font=("Ariel", 20),
-                                     width=450,
-                                     foreground="white",
-                                     border=0,
-                                     readonlybackground="#1c1c1c")
+                                    font=("Ariel", 20),
+                                    width=450,
+                                    foreground="white",
+                                    border=0,
+                                    readonlybackground="#1c1c1c")
                 
-                rot_label.insert(0, f"Rot {i + 1} = {deciphed[i]}")
+                rot_label.insert(0, text)
+
                 rot_label.configure(state="readonly")
                 rot_label.pack(anchor=NW, pady=5)
 
@@ -234,6 +283,31 @@ def after_dec(deciphed:str) -> str:
             vg_rot_label1(state="readonly")
             vg_rot_label1.pack(anchor=NW, pady=30)
 
+
+    elif isinstance(deciphed, list) and dropdownCipher.get() == "A1Z26":
+        if len(deciphed) > 126:
+            rotsFrame.place(x=0,y=240)
+
+            label_backup = CTkLabel(rotsFrame,
+                                  font=("Ariel", 40),
+                                  wraplength=420,
+                                  width=420,
+                                  compound=CENTER)
+            
+            try:
+                copy_button.place_forget()
+            except:
+                pass
+
+            label_backup.configure(text=("english - " + deciphed[0] + " and russian - " + deciphed[1]))
+            label_backup.pack(side=TOP)
+            copy_button.place(x=500,y=500)
+
+        else:
+            label.configure(text=(deciphed[0] + " and russian is : " + deciphed[1]))
+            label.place(in_=button,relx=-1.0,rely=0,x=0,y=100)
+
+            copy_button.place(in_=label,relx=1.0,rely=0.8,x=10,y=0)
 
     else:
         if len(deciphed) > 126:
@@ -278,34 +352,6 @@ window.resizable(False, True)
 
 # ---------------------------------------
 
-
-options = [
-    "Цезарь",
-    "Виженер",
-    "Атбаш",
-    "Плейфер"
-]
-whatLang = [
-    "Все, что ниже",
-    "Русский",
-    "English"
-]
-
-whatLangVigenere = [
-    "Русский",
-    "English"
-]
-
-RotsEN = [
-    "All","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25"
-]
-RotsRU = [
-    "All","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32"
-]
-RotsVG = [
-    "All","0","1"
-]
-
 cipherEntry = CTkEntry(window,
                     font=("Arial", 20),
                     width=500,
@@ -339,6 +385,10 @@ dropdownRots = CTkOptionMenu(frame,
                          command=checkRot,
                          state=DISABLED)
 dropdownRots.set("ROT?")
+
+checkbox = CTkCheckBox(frame,
+                       text="All",
+                       command=checkCheckbox)
 
 keyEntry = CTkEntry(frame,
                     font=("Arial",15),
