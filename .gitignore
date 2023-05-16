@@ -3,6 +3,7 @@
 /Lib
 /Scripts
 /__pycache__
+/ciphers/__pycache__
 /pyvenv.cfg
 /main.spec
 /commands.txt
