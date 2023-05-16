@@ -5,13 +5,13 @@ from time import sleep
 from options import *
 from char_lim import *
 
-from caesar_file import caesar_dec
-from vigenere_file import vigenere_dec
-from atbash_file import atbash_dec
-from playfair_file import playfair_dec
-from A1Z26_file import a1z26_dec
-from hill_file import hill_dec
-from rail_fence_file import rail_fence_dec
+from ciphers.caesar_file import caesar_dec
+from ciphers.vigenere_file import vigenere_dec
+from ciphers.atbash_file import atbash_dec
+from ciphers.playfair_file import playfair_dec
+from ciphers.A1Z26_file import a1z26_dec
+from ciphers.hill_file import hill_dec
+from ciphers.rail_fence_file import rail_fence_dec
 
 VERSION = "1.4"
 
@@ -345,7 +345,7 @@ def after_dec(deciphed:str) -> str:
             copy_button.place(x=500,y=500)
 
         else:
-            label.configure(text=(deciphed[0] + " and russian is : " + deciphed[1]))
+            label.configure(text=("english - " + deciphed[0] + " and russian is : " + deciphed[1]))
             label.place(in_=button,relx=-1.0,rely=0,x=0,y=100)
 
             copy_button.place(in_=label,relx=1.0,rely=0.8,x=10,y=0)
@@ -516,7 +516,6 @@ copy_button = CTkButton(window,
                         command=copy)
 
 notes = CTkTextbox(window,
-                   placeholder_text="Notes",
                    font=("Ariel", 30),
                    width=300,
                    height=400)

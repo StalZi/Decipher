@@ -7,7 +7,7 @@ def caesarALL(value:str, rot:int) -> str:
     increment = 0
 
     for i in range(len(value)):
-            print(i)
+            
             if value[i] in alphabetRU:
                 result += alphabetRU[alphabetRU.find(value[i]) - rot]
 
