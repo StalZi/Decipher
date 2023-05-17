@@ -13,7 +13,7 @@ whatLang = [
     "English"
 ]
 
-whatLangVigenere = [
+whatLangCut = [
     "Русский",
     "English"
 ]

@@ -11,10 +11,10 @@ i2lEN = dict(zip(range(len(alphabetEN)), alphabetEN))
 
 def matrix_mod_inv(matrix, modulus):
 
-    det = int(np.round(np.linalg.det(matrix)))
+    det = int(np.round(np.linalg.det(np.float64(matrix))))
     det_inv = egcd(det, modulus)[1] % modulus
     matrix_modulus_inv = (
-        det_inv * np.round(det * np.linalg.inv(matrix)).astype(int) % modulus
+        det_inv * np.round(det * np.linalg.inv(np.float64(matrix))).astype(int) % modulus
     )
 
     return matrix_modulus_inv
@@ -40,6 +40,7 @@ def decryptEN(cipher, Kinv):
             number = int(numbers[idx, 0])
             decrypted += i2lEN[number]
 
+    print(decrypted)
     return decrypted
 
 

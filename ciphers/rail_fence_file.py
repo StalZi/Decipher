@@ -55,7 +55,7 @@ def rail_fence_dec(value:str, key:int|str):
     if key == "All":
         all_nums = []
 
-        for i in range(1, 101):
+        for i in range(2, 101):
 
             all_nums.append(decryptRailFence(value, i))
         
