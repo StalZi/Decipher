@@ -1,6 +1,7 @@
 # Decipher
 Decipher is my project that could decipher most of the popular ciphers. Was created to make solving an ARG easier and faster.
 Uses Custom TKinter for a GUI.
+Many of the code was copied for faster developing
 
 Created by StalZi, Roman Cherkashin
 
