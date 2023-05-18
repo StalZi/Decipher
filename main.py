@@ -2,6 +2,7 @@ from customtkinter import *
 
 from options import *
 from char_lim import *
+from animation import SlidePanel
 
 from ciphers.caesar_file import caesar_dec
 from ciphers.vigenere_file import vigenere_dec
@@ -11,13 +12,27 @@ from ciphers.A1Z26_file import a1z26_dec
 from ciphers.hill_file import hill_dec
 from ciphers.rail_fence_file import rail_fence_dec
 
+navBar_open = False
 
 VERSION = "1.4"
 
 set_appearance_mode("dark")
 set_default_color_theme("green")
 
+# handling navbar animation
+def motion(event):
+    global navBar_open
+    print(window.winfo_pointerx() - window.winfo_rootx())
+    
+    if window.winfo_pointerx() - window.winfo_rootx() > 200:
+        navBar_open = False
+        navBar.animate_backwards()
 
+    elif window.winfo_pointerx() - window.winfo_rootx() < 36 and not navBar_open:
+        navBar_open = True
+        navBar.animate_forward()
+
+# handling cipher selection
 def check(event):
     global keyText_trace_id
 
@@ -101,6 +116,7 @@ def check(event):
             if dropdownLanguage.get() == "Все, что ниже":
                 dropdownLanguage.set("Язык?")
                 dropdownRots.configure(state=DISABLED)
+                button.configure(state=DISABLED)
 
             else:
                 dropdownRots.configure(state=NORMAL)
@@ -143,7 +159,7 @@ def check(event):
 
     return
 
-
+# handling language selection
 def checkLanguage(event):
 
     global RotsEN
@@ -178,11 +194,12 @@ def checkLanguage(event):
             window.update()
             return
 
-
+# handling rot selection
 def checkRot(event):
 
     button.configure(state=NORMAL)
 
+# handling checkbox ticking in rail fence
 def checkCheckbox():
 
     if checkboxVar.get() == 1:
@@ -192,14 +209,14 @@ def checkCheckbox():
     else:
         keyEntry.configure(state=NORMAL)
 
-
+# handling pressing the decrypt button
 def decipher(*event):
     if button.cget('state') == DISABLED:
         return
     
     try:
-        copy_button.destroy()
         label.destroy()
+        copy_button.destroy()
     except:
         pass
 
@@ -274,14 +291,14 @@ def decipher(*event):
     else:
         return
 
-
+# showing decrypted message properly
 def after_dec(deciphed:str|list):
     global label, copy_button, manyLabels
 
-    if len(deciphed) > 127 or isinstance(deciphed, list):
-        manyFrame.place(x=0,y=250)
+    if len(deciphed) > 98 or isinstance(deciphed, list):
 
         if isinstance(deciphed, list):
+            manyFrame.place(x=0,y=250)
             manyLabels = []
 
             for i in range(len(deciphed)):
@@ -293,11 +310,11 @@ def after_dec(deciphed:str|list):
                                         width=475)
                 
                 if dropdownCipher.get() == "Виженер":
-                    label.insert(0, f"{i} - {deciphed[i]}")
+                    label.insert(0, f"    {i} - {deciphed[i]}")
                 elif dropdownCipher.get() == "Рейл":
-                    label.insert(0, f"{i + 2} - {deciphed[i]}")
+                    label.insert(0, f"    {i + 2} - {deciphed[i]}")
                 else:
-                    label.insert(0, f"{i + 1} - {deciphed[i]}")
+                    label.insert(0, f"    {i + 1} - {deciphed[i]}")
 
                 label.configure(state="readonly")
 
@@ -305,23 +322,20 @@ def after_dec(deciphed:str|list):
 
                 manyLabels.append(label)
 
+            navBar.lift()
+
             window.update()
             return
 
-        label = CTkLabel(manyFrame,
+        label = CTkTextbox(window,
                          font=("Ariel", 40),
-                         wraplength=420,
-                         width=420,
-                         compound=CENTER,
-                         text=deciphed)
+                         width=475,
+                         height=300,
+                         fg_color="#1c1c1c")
+        label.insert(INSERT, deciphed)
+        label.configure(state=DISABLED)
         
-        copy_button = CTkButton(window,
-                                text="Copy",
-                                width=20,
-                                command=copy)
-        
-        label.pack(anchor=NW,pady=5)
-        copy_button.place(x=500,y=500)
+        label.place(in_=button,relx=-1.0,rely=1.0,x=0,y=50)
 
 
     else:
@@ -343,9 +357,11 @@ def after_dec(deciphed:str|list):
         copy_button.place(in_=label,relx=1.0,rely=0.95,x=0,y=0)
 
 
+    navBar.lift()
+
     window.update()
 
-
+# copying the text when the copy button pressed
 def copy():
 
     window.clipboard_clear()
@@ -357,25 +373,32 @@ def copy():
 window = CTk()
 window.title(f"Decipher by StalZi {VERSION}")
 window.geometry("800x600")
-window.resizable(False, True)
+window.resizable(False, False)
 
 # ---------------------------------------
 
+
+# the main entry at the top
 cipherEntry = CTkEntry(window,
                     font=("Arial", 20),
                     width=500,
-                    placeholder_text="Cipher")
+                    placeholder_text="Cipher",
+                    corner_radius=0)
 cipherEntry.pack(anchor=NW)
 
-frame = CTkFrame(window)
+# the frame with all the tools for decrypting some cipher
+frame = CTkFrame(window,
+                 corner_radius=0)
 frame.pack(anchor=N,fill=BOTH)
 
+# the cipher selection menu
 dropdownCipher = CTkOptionMenu(frame,
                          values=options,
                          command=check)
 dropdownCipher.set("Шифр?")
 dropdownCipher.grid(row=0,column=0,padx=10,pady=20)
 
+# the language selection menu
 dropdownLanguage = CTkOptionMenu(frame,
                          values=None,
                          command=checkLanguage,
@@ -383,18 +406,14 @@ dropdownLanguage = CTkOptionMenu(frame,
 dropdownLanguage.set("Язык?")
 dropdownLanguage.grid(row=0,column=1,padx=15,pady=20)
 
-fakeDropdownRots = CTkOptionMenu(window,
-                         values=None,
-                         command=checkRot,
-                         state=DISABLED)
-fakeDropdownRots.set("ROT?")
-
+# the rots selection menu
 dropdownRots = CTkOptionMenu(frame,
                          values=None,
                          command=checkRot,
                          state=DISABLED)
 dropdownRots.set("ROT?")
 
+# the checkbox for the rail fence cipher
 checkboxVar = IntVar()
 
 checkbox = CTkCheckBox(frame,
@@ -402,6 +421,7 @@ checkbox = CTkCheckBox(frame,
                        text="All",
                        command=checkCheckbox)
 
+# matrix stuff for the hill cipher
 matrix_title = CTkLabel(window,
                         text="Матрица",
                         font=("Ariel", 20),
@@ -450,6 +470,7 @@ matrix_text2.trace("w", lambda *args: character_limit1(matrix_text2))
 matrix_text3.trace("w", lambda *args: character_limit1(matrix_text3))
 matrix_text4.trace("w", lambda *args: character_limit1(matrix_text4))
 
+# key entry for different ciphers
 keyText = StringVar()
 
 keyEntry = CTkEntry(frame,
@@ -457,11 +478,13 @@ keyEntry = CTkEntry(frame,
                     textvariable=keyText,
                     width=150)
 
+# the frame for displaying decrypted text if there is too many of it
 manyFrame = CTkScrollableFrame(window,
                      width=475,
                      height=330,
                      fg_color="#1c1c1c")
 
+# the main decrypt button
 button = CTkButton(window,
                    text="Дешифровать",
                    font=("Arial",20),
@@ -474,10 +497,24 @@ button = CTkButton(window,
 button.place(x=170,y=175)
 window.bind("<Return>", decipher)
 
+# the notes box
 notes = CTkTextbox(window,
                    font=("Ariel", 30),
                    width=300,
                    height=400)
-notes.place(x=500,y=0)
+notes.place(x=500,y=-4)
+
+# the navigation bar and showing it when needed
+navBar = SlidePanel(window,
+                    -0.3,
+                    0.01)
+
+navButton = CTkButton(navBar,
+                   corner_radius=0)
+navButton.pack(side=TOP)
+
+window.bind("<Motion>", motion)
+
+
 
 window.mainloop()
