@@ -283,8 +283,7 @@ def decipher(*event):
                 try:
                     after_dec(hill_dec(dropdownLanguage.get(),cipherEntry.get(),[[matrix_text1.get(), matrix_text2.get()],[matrix_text3.get(), matrix_text4.get()]]))
                 except:
-                    after_dec("""Bad symbols (тут вообще пиздец, так что пишу на русском, возможные проблемы: 
-Плохая матрица, спец символы в шифре(пробелы), длина шифра не квадрат числа)""")
+                    after_dec("""Bad symbols (Отключен)""")
 
             case _:
                 return

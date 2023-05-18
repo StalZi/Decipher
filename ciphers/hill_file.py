@@ -1,5 +1,5 @@
 import numpy as np
-from egcd import egcd
+# from egcd import egcd
 
 alphabetRU = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
 alphabetEN = "abcdefghijklmnopqrstuvwxyz"
