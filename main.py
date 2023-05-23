@@ -73,7 +73,7 @@ def check(event):
             dropdownLanguage.grid(row=0,column=1,padx=15,pady=20)
             dropdownRots.grid(row=0,column=2,padx=15,pady=20)
 
-        case "Атбаш" | "A1Z26":
+        case "Атбаш":
 
             if dropdownLanguage.get() != "Язык?":
                 button.configure(state=NORMAL)
@@ -83,6 +83,19 @@ def check(event):
 
 
             dropdownLanguage.grid(row=0,column=1)
+            dropdownLanguage.configure(values=whatLang)
+        
+        case "A1Z26":
+            if dropdownLanguage.get() != "Язык?":
+                button.configure(state=NORMAL)
+
+            checkbox.configure(text="A2Z52")
+
+            dropdownRots.grid_forget()
+            keyEntry.grid_forget()
+
+            dropdownLanguage.grid(row=0,column=1)
+            checkbox.grid(row=0,column=2)
             dropdownLanguage.configure(values=whatLang)
 
         case "Рейл":
@@ -202,12 +215,18 @@ def checkRot(event):
 # handling checkbox ticking in rail fence
 def checkCheckbox():
 
-    if checkboxVar.get() == 1:
-        keyEntry.delete(0, END)
-        keyEntry.configure(state=DISABLED)
-        
-    else:
-        keyEntry.configure(state=NORMAL)
+    match dropdownCipher.get():
+    
+        case "Рейл":
+            if checkboxVar.get() == 1:
+                keyEntry.delete(0, END)
+                keyEntry.configure(state=DISABLED)
+
+            else:
+                keyEntry.configure(state=NORMAL)
+
+        case "A1Z26":
+            pass
 
 # handling pressing the decrypt button
 def decipher(*event):
@@ -264,7 +283,10 @@ def decipher(*event):
             case "A1Z26":
 
                 try:
-                    after_dec(a1z26_dec(dropdownLanguage.get(), cipherEntry.get()))
+                    if checkboxVar.get() == 1:
+                        after_dec(a1z26_dec(dropdownLanguage.get(), cipherEntry.get(), True))
+                    else:
+                        after_dec(a1z26_dec(dropdownLanguage.get(), cipherEntry.get()))
                 except:
                     after_dec("Bad symbols (should be 1-2-15-2-1, etc.)")
 
@@ -278,7 +300,7 @@ def decipher(*event):
                 except:
                     after_dec("Bad symbols, the key should be an integer")
 
-            case "Хилл" if matrix1 != "" and matrix2 != "" and matrix3 != "" and matrix4 != "":
+            case "Хилл" if matrix_text1.get() != "" and matrix_text2.get() != "" and matrix_text3.get() != "" and matrix_text4.get() != "":
 
                 try:
                     after_dec(hill_dec(dropdownLanguage.get(),cipherEntry.get(),[[matrix_text1.get(), matrix_text2.get()],[matrix_text3.get(), matrix_text4.get()]]))
