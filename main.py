@@ -19,18 +19,6 @@ VERSION = "1.4"
 set_appearance_mode("dark")
 set_default_color_theme("green")
 
-# handling navbar animation
-def motion(event):
-    global navBar_open
-    print(window.winfo_pointerx() - window.winfo_rootx())
-    
-    if window.winfo_pointerx() - window.winfo_rootx() > 200:
-        navBar_open = False
-        navBar.animate_backwards()
-
-    elif window.winfo_pointerx() - window.winfo_rootx() < 36 and not navBar_open:
-        navBar_open = True
-        navBar.animate_forward()
 
 # handling cipher selection
 def check(event):
@@ -228,24 +216,13 @@ def checkCheckbox():
         case "A1Z26":
             pass
 
+
 # handling pressing the decrypt button
 def decipher(*event):
     if button.cget('state') == DISABLED:
         return
     
-    try:
-        label.destroy()
-        copy_button.destroy()
-    except:
-        pass
-
-    manyFrame.place_forget()
-
-    try:
-        for widget in manyLabels:
-            widget.pack_forget()
-    except:
-        pass
+    forget()
 
     if cipherEntry.get() != "":
 
@@ -314,54 +291,54 @@ def decipher(*event):
 
 # showing decrypted message properly
 def after_dec(deciphed:str|list):
-    global label, copy_button, manyLabels
+    global decrypted_Label, copy_button, manyDecrypted_Labels
 
     if len(deciphed) > 98 or isinstance(deciphed, list):
 
         if isinstance(deciphed, list):
             manyFrame.place(x=0,y=250)
-            manyLabels = []
+            manyDecrypted_Labels = []
 
             for i in range(len(deciphed)):
 
-                label = CTkEntry(manyFrame,
+                decrypted_Label = CTkEntry(manyFrame,
                                         font=("Ariel", 24),
                                         fg_color="transparent",
                                         border_width=0,
                                         width=475)
                 
                 if dropdownCipher.get() == "Виженер":
-                    label.insert(0, f"    {i} - {deciphed[i]}")
+                    decrypted_Label.insert(0, f"    {i} - {deciphed[i]}")
                 elif dropdownCipher.get() == "Рейл":
-                    label.insert(0, f"    {i + 2} - {deciphed[i]}")
+                    decrypted_Label.insert(0, f"    {i + 2} - {deciphed[i]}")
                 else:
-                    label.insert(0, f"    {i + 1} - {deciphed[i]}")
+                    decrypted_Label.insert(0, f"    {i + 1} - {deciphed[i]}")
 
-                label.configure(state="readonly")
+                decrypted_Label.configure(state="readonly")
 
-                label.pack(anchor=NW,pady=5)
+                decrypted_Label.pack(anchor=NW,pady=5)
 
-                manyLabels.append(label)
+                manyDecrypted_Labels.append(decrypted_Label)
 
             navBar.lift()
 
             window.update()
             return
 
-        label = CTkTextbox(window,
+        decrypted_Label = CTkTextbox(window,
                          font=("Ariel", 40),
                          width=475,
                          height=300,
                          fg_color="#1c1c1c")
-        label.insert(INSERT, deciphed)
-        label.configure(state=DISABLED)
+        decrypted_Label.insert(INSERT, deciphed)
+        decrypted_Label.configure(state=DISABLED)
         
-        label.place(in_=button,relx=-1.0,rely=1.0,x=0,y=50)
+        decrypted_Label.place(in_=button,relx=-1.0,rely=1.0,x=0,y=50)
 
 
     else:
 
-        label = CTkLabel(window,
+        decrypted_Label = CTkLabel(window,
                          font=("Ariel", 40),
                          wraplength=420,
                          width=420,
@@ -374,20 +351,94 @@ def after_dec(deciphed:str|list):
                                 command=copy)
 
 
-        label.place(in_=button,relx=-1.0,rely=1.0,x=0,y=50)
-        copy_button.place(in_=label,relx=1.0,rely=0.95,x=0,y=0)
+        decrypted_Label.place(in_=button,relx=-1.0,rely=1.0,x=0,y=50)
+        copy_button.place(in_=decrypted_Label,relx=1.0,rely=0.95,x=0,y=0)
 
 
     navBar.lift()
 
     window.update()
 
+
 # copying the text when the copy button pressed
 def copy():
 
     window.clipboard_clear()
-    window.clipboard_append(label.cget("text"))
+    window.clipboard_append(decrypted_Label.cget("text"))
 
+# forgetting widgets
+def forget():
+    try:
+        decrypted_Label.destroy()
+        copy_button.destroy()
+    except:
+        pass
+
+    manyFrame.place_forget()
+
+    try:
+        for widget in manyDecrypted_Labels:
+            widget.pack_forget()
+    except:
+        pass
+
+def forget_everything_ciphers():
+    forget()
+
+    frame.pack_forget()
+    cipherEntry.pack_forget()
+
+    matrix_title.place_forget()
+    matrix_label.place_forget()
+
+    matrix1.place_forget()
+    matrix2.place_forget()
+    matrix3.place_forget()
+    matrix4.place_forget()
+
+    checkbox.place_forget()
+    button.place_forget()
+
+
+    button.unbind("<Return>")
+    
+def forget_everything_alphabets():
+    pass
+
+def forget_everything_systems():
+    pass
+
+# handling navbar things
+
+# handling navbar animation
+def motion(event):
+    global navBar_open
+    print(window.winfo_pointerx() - window.winfo_rootx())
+    
+    if window.winfo_pointerx() - window.winfo_rootx() > 200:
+        navBar_open = False
+        navBar.animate_backwards()
+
+    elif window.winfo_pointerx() - window.winfo_rootx() < 36 and not navBar_open:
+        navBar_open = True
+        navBar.animate_forward()
+
+def navCiphers():
+    forget_everything_alphabets()
+    forget_everything_systems()
+
+    cipherEntry.pack(anchor=NW)
+    frame.pack(anchor=N,fill=BOTH)
+    button.place(x=170,y=175)
+    window.bind("<Return>", decipher)
+
+def navSystems():
+    forget_everything_ciphers()
+    forget_everything_alphabets()
+
+def navAlphabets():
+    forget_everything_ciphers()
+    forget_everything_systems()
 
 # ---------------------------------------
 
@@ -530,11 +581,31 @@ navBar = SlidePanel(window,
                     -0.3,
                     0.01)
 
-navButton = CTkButton(navBar,
-                   corner_radius=0)
-navButton.pack(side=TOP)
-
 window.bind("<Motion>", motion)
+
+
+# --------------- navigation bar widgets ---------------
+
+navButtonCiphers = CTkButton(navBar,
+                      corner_radius=0,
+                      text="Шифры",
+                      command=navCiphers)
+navButtonCiphers.pack(side=TOP)
+
+navButtonSystems = CTkButton(navBar,
+                      corner_radius=0,
+                      text="Системы",
+                      command=navSystems)
+navButtonSystems.pack(side=TOP)
+
+navButtonAlphabets = CTkButton(navBar,
+                               corner_radius=0,
+                               text="Алфавиты",
+                               command=navAlphabets)
+navButtonAlphabets.pack(side=TOP)
+
+
+# --------------- navigation bar widgets ---------------
 
 
 
