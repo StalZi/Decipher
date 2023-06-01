@@ -12,7 +12,6 @@ from ciphers.A1Z26_file import a1z26_dec
 from ciphers.hill_file import hill_dec
 from ciphers.rail_fence_file import rail_fence_dec
 
-navBar_open = False
 
 VERSION = "1.4"
 
@@ -22,15 +21,20 @@ set_default_color_theme("green")
 
 # handling cipher selection
 def check(event):
-    global keyText_trace_id
+    if event != "Шифр?":
+        global keyText_trace_id
 
-    dropdownLanguage.configure(state=NORMAL)
-    checkboxVar.set(0)
-    checkbox.place_forget()
-    try:
-        keyText.trace_vdelete("w", keyText_trace_id)
-    except:
-        pass
+        dropdownLanguage.configure(state=NORMAL)
+        checkboxVar.set(0)
+        checkbox.place_forget()
+        checkbox.grid_forget()
+        try:
+            keyText.trace_vdelete("w", keyText_trace_id)
+        except:
+            pass
+
+    else:
+        button.configure(state=DISABLED)
 
     if matrix_title.winfo_exists():
 
@@ -69,7 +73,6 @@ def check(event):
             dropdownRots.grid_forget()
             keyEntry.grid_forget()
 
-
             dropdownLanguage.grid(row=0,column=1)
             dropdownLanguage.configure(values=whatLang)
         
@@ -78,7 +81,6 @@ def check(event):
                 button.configure(state=NORMAL)
 
             checkbox.configure(text="A2Z52")
-
             dropdownRots.grid_forget()
             keyEntry.grid_forget()
 
@@ -88,6 +90,7 @@ def check(event):
 
         case "Рейл":
             button.configure(state=NORMAL)
+            checkbox.configure(text="All")
 
             dropdownLanguage.grid_forget()
             dropdownRots.grid_forget()
@@ -129,6 +132,7 @@ def check(event):
             dropdownLanguage.configure(values=whatLangCut)
             dropdownRots.configure(values=RotsVG)
 
+            keyEntry.configure(state=NORMAL)
             keyEntry.grid(row=1,column=1,pady=8)
 
             dropdownRots.grid(row=0,column=2,padx=15,pady=20)
@@ -157,8 +161,6 @@ def check(event):
 
 
     window.update()
-
-    return
 
 # handling language selection
 def checkLanguage(event):
@@ -285,7 +287,24 @@ def decipher(*event):
                     after_dec("Bad symbols (возможные проблемы: Плохая матрица, спец символы в шифре(пробелы), длина шифра не квадрат числа)")
 
             case _:
-                return
+                match radio_var.get():
+                    case "bin (2)":
+                        after_dec()
+
+                    case "oct (8)":
+                        pass
+
+                    case "hex (16)":
+                        pass
+
+                    case "base32":
+                        pass
+
+                    case "base64":
+                        pass
+
+                    case _:
+                        return
     else:
         return
 
@@ -366,6 +385,10 @@ def copy():
     window.clipboard_clear()
     window.clipboard_append(decrypted_Label.cget("text"))
 
+
+def radiobutton_event():
+    button.configure(state=NORMAL)
+
 # forgetting widgets
 def forget():
     try:
@@ -406,14 +429,19 @@ def forget_everything_alphabets():
     pass
 
 def forget_everything_systems():
-    pass
+    bin_radio.place_forget()
+    oct_radio.place_forget()
+    hex_radio.place_forget()
+    base32_radio.place_forget()
+    base64_radio.place_forget()
+    button.place_forget()
 
 # handling navbar things
 
 # handling navbar animation
+navBar_open = False
 def motion(event):
     global navBar_open
-    print(window.winfo_pointerx() - window.winfo_rootx())
     
     if window.winfo_pointerx() - window.winfo_rootx() > 200:
         navBar_open = False
@@ -432,9 +460,32 @@ def navCiphers():
     button.place(x=170,y=175)
     window.bind("<Return>", decipher)
 
+    check(dropdownCipher.get())
+
+
 def navSystems():
-    forget_everything_ciphers()
     forget_everything_alphabets()
+    forget_everything_ciphers()
+
+    cipherEntry.pack(anchor=NW)
+
+    bin_radio.place(x=20,y=40)
+    oct_radio.place(x=200,y=40)
+    hex_radio.place(x=380,y=40)
+    base32_radio.place(x=105,y=100)
+    base64_radio.place(x=265,y=100)
+
+    button.place(x=170,y=175)
+    window.bind("<Return>", decipher)
+
+    if radio_var.get() != "":
+        button.configure(state=NORMAL)
+    else:
+        button.configure(state=DISABLED)
+
+    navBar.lift()
+
+    # ascii_string = "".join([chr(int(binary, 2)) for binary in a_binary_string.split(" ")])
 
 def navAlphabets():
     forget_everything_ciphers()
@@ -490,7 +541,6 @@ checkboxVar = IntVar()
 
 checkbox = CTkCheckBox(frame,
                        variable=checkboxVar,
-                       text="All",
                        command=checkCheckbox)
 
 # matrix stuff for the hill cipher
@@ -585,19 +635,54 @@ window.bind("<Motion>", motion)
 
 
 # --------------- navigation bar widgets ---------------
-
+# default
 navButtonCiphers = CTkButton(navBar,
                       corner_radius=0,
                       text="Шифры",
                       command=navCiphers)
 navButtonCiphers.pack(side=TOP)
 
+# ----
 navButtonSystems = CTkButton(navBar,
                       corner_radius=0,
                       text="Системы",
                       command=navSystems)
 navButtonSystems.pack(side=TOP)
 
+# systems widgets
+radio_var = StringVar()
+bin_radio = CTkRadioButton(window,
+                           text="bin (2)",
+                           value="bin (2)",
+                           font=("Ariel", 20),
+                           variable=radio_var,
+                           command=radiobutton_event)
+oct_radio = CTkRadioButton(window,
+                           text="oct (8)",
+                           value="oct (8)",
+                           font=("Ariel", 20),
+                           variable=radio_var,
+                           command=radiobutton_event)
+hex_radio = CTkRadioButton(window,
+                           text="hex (16)",
+                           value="hex (16)",
+                           font=("Ariel", 20),
+                           variable=radio_var,
+                           command=radiobutton_event)
+base32_radio = CTkRadioButton(window,
+                              text="base32",
+                              value="base32",
+                              font=("Ariel", 20),
+                              variable=radio_var,
+                              command=radiobutton_event)
+base64_radio = CTkRadioButton(window,
+                              text="base64",
+                              value="base64",
+                              font=("Ariel", 20),
+                              variable=radio_var,
+                              command=radiobutton_event)
+
+# ----
 navButtonAlphabets = CTkButton(navBar,
                                corner_radius=0,
                                text="Алфавиты",
