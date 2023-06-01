@@ -4,13 +4,8 @@ from options import *
 from char_lim import *
 from animation import SlidePanel
 
-from ciphers.caesar_file import caesar_dec
-from ciphers.vigenere_file import vigenere_dec
-from ciphers.atbash_file import atbash_dec
-from ciphers.playfair_file import playfair_dec
-from ciphers.A1Z26_file import a1z26_dec
-from ciphers.hill_file import hill_dec
-from ciphers.rail_fence_file import rail_fence_dec
+from ciphers import *
+from systems import *
 
 
 VERSION = "1.4"
@@ -228,68 +223,67 @@ def decipher(*event):
 
     if cipherEntry.get() != "":
 
-        match dropdownCipher.get():
-            
-            case "Цезарь":
+        match current_tab:
 
-                after_dec(caesar_dec(dropdownLanguage.get(), cipherEntry.get(), dropdownRots.get()))
+            case "ciphers":
+                match dropdownCipher.get():
 
-            case "Виженер" if keyText != "":
-                
-                try:
-                    after_dec(vigenere_dec(dropdownLanguage.get(), cipherEntry.get(), keyText.get(), dropdownRots.get()))
-                except:
-                    after_dec("Bad symbols in the entry")
+                    case "Цезарь":
+                    
+                        after_dec(caesar_dec(dropdownLanguage.get(), cipherEntry.get(), dropdownRots.get()))
 
-            case "Атбаш":
+                    case "Виженер" if keyText != "":
 
-                after_dec(atbash_dec(dropdownLanguage.get(), cipherEntry.get()))
+                        try:
+                            after_dec(vigenere_dec(dropdownLanguage.get(), cipherEntry.get(), keyText.get(), dropdownRots.get()))
+                        except:
+                            after_dec("Bad symbols in the entry")
 
-            case "Плейфер" if keyText != "":
+                    case "Атбаш":
+                    
+                        after_dec(atbash_dec(dropdownLanguage.get(), cipherEntry.get()))
 
-                try:
-                    after_dec(playfair_dec(cipherEntry.get(), keyText.get()))
-                except:
-                    after_dec("Bad symbols (!, ?, ., etc.) or the key is incorrect")
+                    case "Плейфер" if keyText != "":
+                    
+                        try:
+                            after_dec(playfair_dec(cipherEntry.get(), keyText.get()))
+                        except:
+                            after_dec("Bad symbols (!, ?, ., etc.) or the key is incorrect")
 
-            case "Плейфер" if keyText != "":
+                    case "A1Z26":
+                    
+                        try:
+                            if checkboxVar.get() == 1:
+                                after_dec(a1z26_dec(dropdownLanguage.get(), cipherEntry.get(), True))
+                            else:
+                                after_dec(a1z26_dec(dropdownLanguage.get(), cipherEntry.get()))
+                        except:
+                            after_dec("Bad symbols (should be 1-2-15-2-1, etc.)")
 
-                try:
-                    after_dec(playfair_dec(cipherEntry.get(), keyText.get()))
-                except:
-                    after_dec("Bad symbols (!, ?, ., etc.) or the key is incorrect")
+                    case "Рейл" if keyText != "":
+                    
+                        try:
+                            if checkboxVar.get() == 1:
+                                after_dec(rail_fence_dec(cipherEntry.get(), "All"))
+                            else:
+                                after_dec(rail_fence_dec(cipherEntry.get(), keyText.get()))
+                        except:
+                            after_dec("Bad symbols, the key should be an integer")
 
-            case "A1Z26":
+                    case "Хилл" if matrix_text1.get() != "" and matrix_text2.get() != "" and matrix_text3.get() != "" and matrix_text4.get() != "":
+                    
+                        try:
+                            after_dec(hill_dec(dropdownLanguage.get(),cipherEntry.get(),[[matrix_text1.get(), matrix_text2.get()],[matrix_text3.get(), matrix_text4.get()]]))
+                        except:
+                            after_dec("Bad symbols (возможные проблемы: Плохая матрица, спец символы в шифре(пробелы), длина шифра не квадрат числа)")
 
-                try:
-                    if checkboxVar.get() == 1:
-                        after_dec(a1z26_dec(dropdownLanguage.get(), cipherEntry.get(), True))
-                    else:
-                        after_dec(a1z26_dec(dropdownLanguage.get(), cipherEntry.get()))
-                except:
-                    after_dec("Bad symbols (should be 1-2-15-2-1, etc.)")
-
-            case "Рейл" if keyText != "":
-
-                try:
-                    if checkboxVar.get() == 1:
-                        after_dec(rail_fence_dec(cipherEntry.get(), "All"))
-                    else:
-                        after_dec(rail_fence_dec(cipherEntry.get(), keyText.get()))
-                except:
-                    after_dec("Bad symbols, the key should be an integer")
-
-            case "Хилл" if matrix_text1.get() != "" and matrix_text2.get() != "" and matrix_text3.get() != "" and matrix_text4.get() != "":
-
-                try:
-                    after_dec(hill_dec(dropdownLanguage.get(),cipherEntry.get(),[[matrix_text1.get(), matrix_text2.get()],[matrix_text3.get(), matrix_text4.get()]]))
-                except:
-                    after_dec("Bad symbols (возможные проблемы: Плохая матрица, спец символы в шифре(пробелы), длина шифра не квадрат числа)")
-
-            case _:
+            case "systems":
                 match radio_var.get():
                     case "bin (2)":
-                        after_dec()
+                        try:
+                            after_dec(bin_dec(cipherEntry.get()))
+                        except:
+                            after_dec("Bad symbols, the text should be binary")
 
                     case "oct (8)":
                         pass
@@ -305,6 +299,9 @@ def decipher(*event):
 
                     case _:
                         return
+                    
+            case "alphabets":
+                pass
     else:
         return
 
@@ -451,7 +448,10 @@ def motion(event):
         navBar_open = True
         navBar.animate_forward()
 
+
 def navCiphers():
+    global current_tab
+    current_tab = "ciphers"
     forget_everything_alphabets()
     forget_everything_systems()
 
@@ -462,8 +462,9 @@ def navCiphers():
 
     check(dropdownCipher.get())
 
-
 def navSystems():
+    global current_tab
+    current_tab = "systems"
     forget_everything_alphabets()
     forget_everything_ciphers()
 
@@ -485,9 +486,9 @@ def navSystems():
 
     navBar.lift()
 
-    # ascii_string = "".join([chr(int(binary, 2)) for binary in a_binary_string.split(" ")])
-
 def navAlphabets():
+    global current_tab
+    current_tab = "alphabets"
     forget_everything_ciphers()
     forget_everything_systems()
 
@@ -499,7 +500,7 @@ window.geometry("800x600")
 window.resizable(False, False)
 
 # ---------------------------------------
-
+current_tab = "ciphers"
 
 # the main entry at the top
 cipherEntry = CTkEntry(window,
