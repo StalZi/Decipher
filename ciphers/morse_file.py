@@ -36,7 +36,7 @@ def morse_dec(morse_string:str, dash:str = "-", dot:str = ".") -> str:
     f'{dash}{dash}{dot}{dot}{dot}': '7',
     f'{dash}{dash}{dash}{dot}{dot}': '8',
     f'{dash}{dash}{dash}{dash}{dot}': '9',
-    f'{dot}{dash}{dot}{dash}{dot}{dash}': '{dot}',
+    f'{dot}{dash}{dot}{dash}{dot}{dash}': '.',
     f'{dash}{dash}{dot}{dot}{dash}{dash}': ':',
     f'{dot}{dot}{dash}{dash}{dot}{dot}': '?',
     f'SPACE': ' '
