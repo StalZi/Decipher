@@ -8,7 +8,7 @@ from ciphers import *
 from systems import *
 
 
-VERSION = "1.4"
+VERSION = "1.5"
 
 set_appearance_mode("dark")
 set_default_color_theme("green")
