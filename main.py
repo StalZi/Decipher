@@ -283,7 +283,7 @@ def decipher(*event):
                         try:
                             after_dec(bin_dec(cipherEntry.get()))
                         except:
-                            after_dec("Bad symbols, the text should be binary (00000001 00000002)")
+                            after_dec("Bad symbols, the text should be binary (00000001 00000011)")
 
                     case "oct (8)":
                         try:
@@ -292,8 +292,10 @@ def decipher(*event):
                             after_dec("Bad symbols, the text should be octal escape (\\141\\142\\143)")
 
                     case "hex (16)":
-                        pass
-
+                        try:
+                            after_dec(hex_dec(cipherEntry.get()))
+                        except:
+                            after_dec("Bad symbols, the text should be hexadecimal (68656c6c6f)")
                     case "base32":
                         pass
 
