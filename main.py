@@ -24,9 +24,12 @@ def check(event):
         checkbox.place_forget()
         checkbox.grid_forget()
         try:
-            keyText.trace_vdelete("w", keyText_trace_id)
+            keyText1.trace_vdelete("w", keyText_trace_id)
         except:
             pass
+
+        keyEntry_morse2.grid_forget()
+        keyEntry_morse3.place_forget()
 
     else:
         button.configure(state=DISABLED)
@@ -54,7 +57,7 @@ def check(event):
                 else:
                     dropdownRots.configure(values=RotsEN)
 
-            keyEntry.grid_forget()
+            keyEntry1.grid_forget()
             dropdownLanguage.configure(values=whatLang)
 
             dropdownLanguage.grid(row=0,column=1,padx=15,pady=20)
@@ -66,7 +69,7 @@ def check(event):
                 button.configure(state=NORMAL)
 
             dropdownRots.grid_forget()
-            keyEntry.grid_forget()
+            keyEntry1.grid_forget()
 
             dropdownLanguage.grid(row=0,column=1)
             dropdownLanguage.configure(values=whatLang)
@@ -77,7 +80,7 @@ def check(event):
 
             checkbox.configure(text="A2Z52")
             dropdownRots.grid_forget()
-            keyEntry.grid_forget()
+            keyEntry1.grid_forget()
 
             dropdownLanguage.grid(row=0,column=1)
             checkbox.grid(row=0,column=2)
@@ -89,14 +92,14 @@ def check(event):
 
             dropdownLanguage.grid_forget()
             dropdownRots.grid_forget()
-            keyEntry.grid_forget()
+            keyEntry1.grid_forget()
 
-            keyEntry.configure(width=100)
-            keyEntry.grid(row=0,column=1,padx=10,pady=20)
+            keyEntry1.configure(width=100)
+            keyEntry1.grid(row=0,column=1,padx=10,pady=20)
 
-            keyText_trace_id = keyText.trace("w", lambda *args: character_limit3(keyText))
+            keyText_trace_id = keyText1.trace("w", lambda *args: character_limit3(keyText1))
 
-            checkbox.place(in_=keyEntry,relx=1.0,rely=0,x=10,y=0)
+            checkbox.place(in_=keyEntry1,relx=1.0,rely=0,x=10,y=0)
         
         case "Плейфер":
 
@@ -105,7 +108,7 @@ def check(event):
             dropdownLanguage.configure(state=DISABLED)
             button.configure(state=NORMAL)
 
-            keyEntry.grid(row=1,column=1,pady=8)
+            keyEntry1.grid(row=1,column=1,pady=8)
 
         case "Виженер":
 
@@ -127,9 +130,10 @@ def check(event):
             dropdownLanguage.configure(values=whatLangCut)
             dropdownRots.configure(values=RotsVG)
 
-            keyEntry.configure(state=NORMAL)
-            keyEntry.grid(row=1,column=1,pady=8)
+            keyEntry1.configure(state=NORMAL)
+            keyEntry1.grid(row=1,column=1,pady=8)
 
+            dropdownLanguage.grid(row=0,column=1,padx=15,pady=20)
             dropdownRots.grid(row=0,column=2,padx=15,pady=20)
             
         case "Хилл":
@@ -142,7 +146,7 @@ def check(event):
                 button.configure(state=DISABLED)
 
             dropdownRots.grid_forget()
-            keyEntry.grid_forget()
+            keyEntry1.grid_forget()
 
             dropdownLanguage.grid(row=0,column=1)
 
@@ -153,6 +157,18 @@ def check(event):
             matrix2.place(x=197,y=135)
             matrix3.place(x=255,y=135)
             matrix4.place(x=305,y=135)
+
+        case "Морзе":
+
+            button.configure(state=NORMAL)
+            dropdownLanguage.set("English")
+            dropdownLanguage.configure(state=DISABLED)
+            dropdownRots.grid(row=0,column=2,padx=15,pady=20)
+
+            dropdownRots.grid_forget()
+            keyEntry1.grid_forget()
+            keyEntry_morse2.grid(row=1,columnspan=2,pady=8)
+            keyEntry_morse3.place(in_=keyEntry_morse2,relx=1.0,rely=0,x=110,y=0)
 
 
     window.update()
@@ -204,11 +220,11 @@ def checkCheckbox():
     
         case "Рейл":
             if checkboxVar.get() == 1:
-                keyEntry.delete(0, END)
-                keyEntry.configure(state=DISABLED)
+                keyEntry1.delete(0, END)
+                keyEntry1.configure(state=DISABLED)
 
             else:
-                keyEntry.configure(state=NORMAL)
+                keyEntry1.configure(state=NORMAL)
 
         case "A1Z26":
             pass
@@ -232,10 +248,10 @@ def decipher(*event):
                     
                         after_dec(caesar_dec(dropdownLanguage.get(), cipherEntry.get(), dropdownRots.get()))
 
-                    case "Виженер" if keyText != "":
+                    case "Виженер" if keyText1.get() != "":
 
                         try:
-                            after_dec(vigenere_dec(dropdownLanguage.get(), cipherEntry.get(), keyText.get(), dropdownRots.get()))
+                            after_dec(vigenere_dec(dropdownLanguage.get(), cipherEntry.get(), keyText1.get(), dropdownRots.get()))
                         except:
                             after_dec("Bad symbols in the entry")
 
@@ -243,10 +259,10 @@ def decipher(*event):
                     
                         after_dec(atbash_dec(dropdownLanguage.get(), cipherEntry.get()))
 
-                    case "Плейфер" if keyText != "":
+                    case "Плейфер" if keyText1.get() != "":
                     
                         try:
-                            after_dec(playfair_dec(cipherEntry.get(), keyText.get()))
+                            after_dec(playfair_dec(cipherEntry.get(), keyText1.get()))
                         except:
                             after_dec("Bad symbols (!, ?, ., etc.) or the key is incorrect")
 
@@ -260,13 +276,13 @@ def decipher(*event):
                         except:
                             after_dec("Bad symbols (should be 1-2-15-2-1, etc.)")
 
-                    case "Рейл" if keyText != "":
+                    case "Рейл" if keyText1.get() != "":
                     
                         try:
                             if checkboxVar.get() == 1:
                                 after_dec(rail_fence_dec(cipherEntry.get(), "All"))
                             else:
-                                after_dec(rail_fence_dec(cipherEntry.get(), keyText.get()))
+                                after_dec(rail_fence_dec(cipherEntry.get(), keyText1.get()))
                         except:
                             after_dec("Bad symbols, the key should be an integer")
 
@@ -276,6 +292,12 @@ def decipher(*event):
                             after_dec(hill_dec(dropdownLanguage.get(),cipherEntry.get(),[[matrix_text1.get(), matrix_text2.get()],[matrix_text3.get(), matrix_text4.get()]]))
                         except:
                             after_dec("Bad symbols (возможные проблемы: Плохая матрица, спец символы в шифре(пробелы), длина шифра не квадрат числа)")
+                    
+                    case "Морзе" if keyText_morse2.get() != "" and keyText_morse3.get() != "":
+                        try:
+                            after_dec(morse_dec(cipherEntry.get(), keyText_morse2.get(), keyText_morse3.get()))
+                        except:
+                            after_dec("Bad symbols, the key entries should announce what dash and dot are (default = '-' and '.')")
 
             case "systems":
                 match radio_var.get():
@@ -612,19 +634,33 @@ matrix_text2.trace("w", lambda *args: character_limit1(matrix_text2))
 matrix_text3.trace("w", lambda *args: character_limit1(matrix_text3))
 matrix_text4.trace("w", lambda *args: character_limit1(matrix_text4))
 
-# key entry for different ciphers
-keyText = StringVar()
+# key entrys for different ciphers
+keyText1 = StringVar()
+keyText_morse2 = StringVar()
+keyText_morse3 = StringVar()
+keyText_morse2.set("-")
+keyText_morse3.set(".")
 
-keyEntry = CTkEntry(frame,
-                    font=("Arial",15),
-                    textvariable=keyText,
-                    width=150)
+keyEntry1 = CTkEntry(frame,
+                     font=("Arial",15),
+                     textvariable=keyText1,
+                     width=150)
+
+keyEntry_morse2 = CTkEntry(frame,
+                           font=("Arial",15),
+                           textvariable=keyText_morse2,
+                           width=50)
+
+keyEntry_morse3 = CTkEntry(frame,
+                           font=("Arial",15),
+                           textvariable=keyText_morse3,
+                           width=50)
 
 # the frame for displaying decrypted text if there is too many of it
 manyFrame = CTkScrollableFrame(window,
-                     width=475,
-                     height=330,
-                     fg_color="#1c1c1c")
+                               width=475,
+                               height=330,
+                               fg_color="#1c1c1c")
 
 # the main decrypt button
 button = CTkButton(window,
