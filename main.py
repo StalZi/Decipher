@@ -297,10 +297,22 @@ def decipher(*event):
                         except:
                             after_dec("Bad symbols, the text should be hexadecimal (68656c6c6f)")
                     case "base32":
-                        pass
+                        try:
+                            after_dec(base32_dec(cipherEntry.get()))
+                        except:
+                            after_dec("Bad symbols, the text should be base32 (KB4XI2DPNYQGS4ZAMF3WK43PNVSSC===)")
 
                     case "base64":
-                        pass
+                        try:
+                            after_dec(base64_dec(cipherEntry.get()))
+                        except:
+                            after_dec("Bad symbols, the text should be base64 (YWJvYmE=)")
+
+                    case "base85":
+                        try:
+                            after_dec(base85_dec(cipherEntry.get()))
+                        except:
+                            after_dec("Bad symbols, the text should be base85 (@:F.a@/)")
 
                     case _:
                         return
@@ -436,6 +448,7 @@ def forget_everything_systems():
     hex_radio.place_forget()
     base32_radio.place_forget()
     base64_radio.place_forget()
+    base85_radio.place_forget()
     button.place_forget()
 
 # handling navbar things
@@ -478,8 +491,9 @@ def navSystems():
     bin_radio.place(x=20,y=40)
     oct_radio.place(x=200,y=40)
     hex_radio.place(x=380,y=40)
-    base32_radio.place(x=105,y=100)
-    base64_radio.place(x=265,y=100)
+    base32_radio.place(x=20,y=100)
+    base64_radio.place(x=200,y=100)
+    base85_radio.place(x=380,y=100)
 
     button.place(x=170,y=175)
     window.bind("<Return>", decipher)
@@ -684,6 +698,13 @@ base32_radio = CTkRadioButton(window,
 base64_radio = CTkRadioButton(window,
                               text="base64",
                               value="base64",
+                              font=("Ariel", 20),
+                              variable=radio_var,
+                              command=radiobutton_event)
+
+base85_radio = CTkRadioButton(window,
+                              text="base85",
+                              value="base85",
                               font=("Ariel", 20),
                               variable=radio_var,
                               command=radiobutton_event)
