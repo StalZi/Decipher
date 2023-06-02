@@ -22,7 +22,6 @@ def check(event):
         dropdownLanguage.configure(state=NORMAL)
         checkboxVar.set(0)
         checkbox.place_forget()
-        checkbox.grid_forget()
         try:
             keyText1.trace_vdelete("w", keyText_trace_id)
         except:
@@ -83,7 +82,7 @@ def check(event):
             keyEntry1.grid_forget()
 
             dropdownLanguage.grid(row=0,column=1)
-            checkbox.grid(row=0,column=2)
+            checkbox.place(in_=dropdownLanguage,relx=1.0,rely=0,x=10,y=0)
             dropdownLanguage.configure(values=whatLang)
 
         case "Рейл":
