@@ -236,120 +236,129 @@ def decipher(*event):
     
     forget()
 
-    if cipherEntry.get() != "":
-
-        match current_tab:
-
-            case "ciphers":
-                match dropdownCipher.get():
-
-                    case "Цезарь":
-                    
-                        after_dec(caesar_dec(dropdownLanguage.get(), cipherEntry.get(), dropdownRots.get()))
-
-                    case "Виженер" if keyText1.get() != "":
-
-                        try:
-                            after_dec(vigenere_dec(dropdownLanguage.get(), cipherEntry.get(), keyText1.get(), dropdownRots.get()))
-                        except:
-                            after_dec("Bad symbols in the entry")
-
-                    case "Атбаш":
-                    
-                        after_dec(atbash_dec(dropdownLanguage.get(), cipherEntry.get()))
-
-                    case "Плейфер" if keyText1.get() != "":
-                    
-                        try:
-                            after_dec(playfair_dec(cipherEntry.get(), keyText1.get()))
-                        except:
-                            after_dec("Bad symbols (!, ?, ., etc.) or the key is incorrect")
-
-                    case "A1Z26":
-                    
-                        try:
-                            if checkboxVar.get() == 1:
-                                after_dec(a1z26_dec(dropdownLanguage.get(), cipherEntry.get(), True))
-                            else:
-                                after_dec(a1z26_dec(dropdownLanguage.get(), cipherEntry.get()))
-                        except:
-                            after_dec("Bad symbols (should be 1-2-15-2-1, etc.)")
-
-                    case "Рейл" if keyText1.get() != "":
-                    
-                        try:
-                            if checkboxVar.get() == 1:
-                                after_dec(rail_fence_dec(cipherEntry.get(), "All"))
-                            else:
-                                after_dec(rail_fence_dec(cipherEntry.get(), keyText1.get()))
-                        except:
-                            after_dec("Bad symbols, the key should be an integer")
-
-                    case "Хилл" if matrix_text1.get() != "" and matrix_text2.get() != "" and matrix_text3.get() != "" and matrix_text4.get() != "":
-                    
-                        try:
-                            after_dec(hill_dec(dropdownLanguage.get(),cipherEntry.get(),[[matrix_text1.get(), matrix_text2.get()],[matrix_text3.get(), matrix_text4.get()]]))
-                        except:
-                            after_dec("Bad symbols (возможные проблемы: Плохая матрица, спец символы в шифре(пробелы), длина шифра не квадрат числа)")
-                    
-                    case "Морзе" if keyText_morse2.get() != "" and keyText_morse3.get() != "":
-                        try:
-                            after_dec(morse_dec(cipherEntry.get(), keyText_morse2.get(), keyText_morse3.get()))
-                        except:
-                            after_dec("Bad symbols, the key entries should announce what dash and dot are (default = '-' and '.')")
-
-            case "systems":
-                match radio_var.get():
-                    case "bin (2)":
-                        try:
-                            after_dec(bin_dec(cipherEntry.get()))
-                        except:
-                            after_dec("Bad symbols, the text should be binary (00000001 00000011)")
-
-                    case "oct (8)":
-                        try:
-                            after_dec(oct_dec(cipherEntry.get()))
-                        except:
-                            after_dec("Bad symbols, the text should be octal escape (\\141\\142\\143)")
-
-                    case "hex (16)":
-                        try:
-                            after_dec(hex_dec(cipherEntry.get()))
-                        except:
-                            after_dec("Bad symbols, the text should be hexadecimal (68656c6c6f)")
-                    case "base32":
-                        try:
-                            after_dec(base32_dec(cipherEntry.get()))
-                        except:
-                            after_dec("Bad symbols, the text should be base32 (KB4XI2DPNYQGS4ZAMF3WK43PNVSSC===)")
-
-                    case "base64":
-                        try:
-                            after_dec(base64_dec(cipherEntry.get()))
-                        except:
-                            after_dec("Bad symbols, the text should be base64 (YWJvYmE=)")
-
-                    case "base85":
-                        try:
-                            after_dec(base85_dec(cipherEntry.get()))
-                        except:
-                            after_dec("Bad symbols, the text should be base85 (@:F.a@/)")
-
-                    case _:
-                        return
-                    
-            case "alphabets":
-                pass
-    else:
+    if cipherEntry.get() == "":
         return
+
+    match current_tab:
+        case "ciphers":
+            match dropdownCipher.get():
+                case "Цезарь":
+                
+                    after_dec(caesar_dec(dropdownLanguage.get(), cipherEntry.get(), dropdownRots.get()))
+
+                case "Виженер" if keyText1.get() != "":
+
+                    try:
+                        after_dec(vigenere_dec(dropdownLanguage.get(), cipherEntry.get(), keyText1.get(), dropdownRots.get()))
+                    except:
+                        after_dec("Bad symbols in the entry")
+
+                case "Атбаш":
+                
+                    after_dec(atbash_dec(dropdownLanguage.get(), cipherEntry.get()))
+
+                case "Плейфер" if keyText1.get() != "":
+                
+                    try:
+                        after_dec(playfair_dec(cipherEntry.get(), keyText1.get()))
+                    except:
+                        after_dec("Bad symbols (!, ?, ., etc.) or the key is incorrect")
+
+                case "A1Z26":
+                
+                    try:
+
+                        if checkboxVar.get() == 1:
+                            after_dec(a1z26_dec(dropdownLanguage.get(), cipherEntry.get(), True))
+                        else:
+                            after_dec(a1z26_dec(dropdownLanguage.get(), cipherEntry.get()))
+
+                    except:
+                        after_dec("Bad symbols (should be 1-2-15-2-1, etc.)")
+
+                case "Рейл" if keyText1.get() != "":
+                
+                    try:
+
+                        if checkboxVar.get() == 1:
+                            after_dec(rail_fence_dec(cipherEntry.get(), "All"))
+                        else:
+                            after_dec(rail_fence_dec(cipherEntry.get(), keyText1.get()))
+
+                    except:
+                        after_dec("Bad symbols, the key should be an integer")
+
+                case "Хилл" if matrix_text1.get() != "" and matrix_text2.get() != "" and matrix_text3.get() != "" and matrix_text4.get() != "":
+                
+                    try:
+                        after_dec(hill_dec(dropdownLanguage.get(),cipherEntry.get(),[[matrix_text1.get(), matrix_text2.get()],[matrix_text3.get(), matrix_text4.get()]]))
+                    except:
+                        after_dec("Bad symbols (возможные проблемы: Плохая матрица, спец символы в шифре(пробелы), длина шифра не квадрат числа)")
+                
+                case "Морзе" if keyText_morse2.get() != "" and keyText_morse3.get() != "":
+                    try:
+                        after_dec(morse_dec(cipherEntry.get(), keyText_morse2.get(), keyText_morse3.get()))
+                    except:
+                        after_dec("Bad symbols, the key entries should announce what dash and dot are (default = '-' and '.')")
+
+
+        case "systems":
+            match radio_var.get():
+
+                case "bin (2)":
+
+                    try:
+                        after_dec(bin_dec(cipherEntry.get()))
+                    except:
+                        after_dec("Bad symbols, the text should be binary (00000001 00000011)")
+
+                case "oct (8)":
+
+                    try:
+                        after_dec(oct_dec(cipherEntry.get()))
+                    except:
+                        after_dec("Bad symbols, the text should be octal escape (\\141\\142\\143)")
+
+                case "hex (16)":
+
+                    try:
+                        after_dec(hex_dec(cipherEntry.get()))
+                    except:
+                        after_dec("Bad symbols, the text should be hexadecimal (68656c6c6f)")
+
+                case "base32":
+
+                    try:
+                        after_dec(base32_dec(cipherEntry.get()))
+                    except:
+                        after_dec("Bad symbols, the text should be base32 (KB4XI2DPNYQGS4ZAMF3WK43PNVSSC===)")
+
+                case "base64":
+
+                    try:
+                        after_dec(base64_dec(cipherEntry.get()))
+                    except:
+                        after_dec("Bad symbols, the text should be base64 (YWJvYmE=)")
+
+                case "base85":
+
+                    try:
+                        after_dec(base85_dec(cipherEntry.get()))
+                    except:
+                        after_dec("Bad symbols, the text should be base85 (@:F.a@/)")
+
+                case _:
+                    return
+                
+        case "alphabets":
+            pass
 
 # showing decrypted message properly
 def after_dec(deciphed:str|list):
     global decrypted_Label, copy_button, manyDecrypted_Labels
 
-    if len(deciphed) > 98 or isinstance(deciphed, list):
-
-        if isinstance(deciphed, list):
+    if isinstance(deciphed, list):
+            
             manyFrame.place(x=0,y=250)
             manyDecrypted_Labels = []
 
@@ -374,10 +383,7 @@ def after_dec(deciphed:str|list):
 
                 manyDecrypted_Labels.append(decrypted_Label)
 
-            navBar.lift()
-
-            window.update()
-            return
+    elif len(deciphed) > 98:
 
         decrypted_Label = CTkTextbox(window,
                          font=("Ariel", 40),
@@ -410,7 +416,6 @@ def after_dec(deciphed:str|list):
 
 
     navBar.lift()
-
     window.update()
 
 
@@ -539,8 +544,9 @@ window.title(f"Decipher by StalZi {VERSION}")
 window.geometry("800x600")
 window.resizable(False, False)
 
-# ---------------------------------------
 current_tab = "ciphers"
+# ---------------------------------------
+# general widgets
 
 # the main entry at the top
 cipherEntry = CTkEntry(window,
@@ -549,6 +555,44 @@ cipherEntry = CTkEntry(window,
                     placeholder_text="Cipher",
                     corner_radius=0)
 cipherEntry.pack(anchor=NW)
+
+# the main decrypt button
+button = CTkButton(window,
+                   text="Дешифровать",
+                   font=("Arial",20),
+                   command=decipher,
+                   state=DISABLED,
+                   width=150,
+                   height=50,
+                   fg_color="#253322",
+                   hover_color="#26a80c")
+button.place(x=170,y=175)
+window.bind("<Return>", decipher)
+
+# the notes box
+notes = CTkTextbox(window,
+                   font=("Ariel", 30),
+                   width=300,
+                   height=400)
+notes.place(x=500,y=-4)
+
+# the navigation bar and showing it when needed
+navBar = SlidePanel(window,
+                    -0.3,
+                    0.01)
+
+window.bind("<Motion>", motion)
+
+
+# --------------- tab widgets ---------------
+# default tab
+navButtonCiphers = CTkButton(navBar,
+                      corner_radius=0,
+                      text="Шифры",
+                      command=navCiphers)
+navButtonCiphers.pack(side=TOP)
+
+# ciphers widgets
 
 # the frame with all the tools for decrypting some cipher
 frame = CTkFrame(window,
@@ -661,43 +705,7 @@ manyFrame = CTkScrollableFrame(window,
                                height=330,
                                fg_color="#1c1c1c")
 
-# the main decrypt button
-button = CTkButton(window,
-                   text="Дешифровать",
-                   font=("Arial",20),
-                   command=decipher,
-                   state=DISABLED,
-                   width=150,
-                   height=50,
-                   fg_color="#253322",
-                   hover_color="#26a80c")
-button.place(x=170,y=175)
-window.bind("<Return>", decipher)
-
-# the notes box
-notes = CTkTextbox(window,
-                   font=("Ariel", 30),
-                   width=300,
-                   height=400)
-notes.place(x=500,y=-4)
-
-# the navigation bar and showing it when needed
-navBar = SlidePanel(window,
-                    -0.3,
-                    0.01)
-
-window.bind("<Motion>", motion)
-
-
-# --------------- navigation bar widgets ---------------
-# default
-navButtonCiphers = CTkButton(navBar,
-                      corner_radius=0,
-                      text="Шифры",
-                      command=navCiphers)
-navButtonCiphers.pack(side=TOP)
-
-# ----
+# ----------
 navButtonSystems = CTkButton(navBar,
                       corner_radius=0,
                       text="Системы",
@@ -705,6 +713,7 @@ navButtonSystems = CTkButton(navBar,
 navButtonSystems.pack(side=TOP)
 
 # systems widgets
+
 radio_var = StringVar()
 bin_radio = CTkRadioButton(window,
                            text="bin (2)",
@@ -744,7 +753,7 @@ base85_radio = CTkRadioButton(window,
                               variable=radio_var,
                               command=radiobutton_event)
 
-# ----
+# ------------
 navButtonAlphabets = CTkButton(navBar,
                                corner_radius=0,
                                text="Алфавиты",
@@ -752,8 +761,9 @@ navButtonAlphabets = CTkButton(navBar,
 navButtonAlphabets.pack(side=TOP)
 
 
-# --------------- navigation bar widgets ---------------
-
+# --------------- tab widgets ---------------
+notes.lift()
+navBar.lift()
 
 
 window.mainloop()
