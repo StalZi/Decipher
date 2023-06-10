@@ -367,10 +367,10 @@ def after_dec(*deciphed:str|list, image:bool = False):
         reveal_output_button.place(x=500,y=450)
 
 
-    if isinstance(deciphed, list):
+    elif isinstance(deciphed, list):
             
             manyFrame.place(x=0,y=250)
-            manyDecrypted_Labels = []
+            manyDecrypted_labels = []
 
             for i in range(len(deciphed)):
 
@@ -391,7 +391,7 @@ def after_dec(*deciphed:str|list, image:bool = False):
 
                 decrypted_label.pack(anchor=NW,pady=5)
 
-                manyDecrypted_Labels.append(decrypted_label)
+                manyDecrypted_labels.append(decrypted_label)
 
     elif len(deciphed) > 98:
 
