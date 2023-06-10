@@ -1,4 +1,6 @@
 from customtkinter import *
+from PIL import Image
+import os
 
 from options import *
 from char_lim import *
@@ -6,9 +8,10 @@ from animation import SlidePanel
 
 from ciphers import *
 from systems import *
+from spectrs import *
 
 
-VERSION = "1.5"
+VERSION = "1.6"
 
 set_appearance_mode("dark")
 set_default_color_theme("green")
@@ -349,13 +352,20 @@ def decipher(*event):
 
                 case _:
                     return
-                
-        case "alphabets":
-            pass
 
 # showing decrypted message properly
-def after_dec(deciphed:str|list):
-    global decrypted_Label, copy_button, manyDecrypted_Labels
+def after_dec(*deciphed:str|list, image:bool = False):
+    global decrypted_label, copy_button, manyDecrypted_labels
+
+    if image:
+        decrypted_label = CTkLabel(window,
+                                   image=CTkImage(dark_image=Image.open('spectrogram_files/spectrogram.png'),
+                                                  size=(500,500)),
+                                   text='')
+        decrypted_label.place(x=0,y=100)
+
+        reveal_output_button.place(x=500,y=450)
+
 
     if isinstance(deciphed, list):
             
@@ -364,41 +374,41 @@ def after_dec(deciphed:str|list):
 
             for i in range(len(deciphed)):
 
-                decrypted_Label = CTkEntry(manyFrame,
+                decrypted_label = CTkEntry(manyFrame,
                                         font=("Ariel", 24),
                                         fg_color="transparent",
                                         border_width=0,
                                         width=475)
                 
                 if dropdownCipher.get() == "Виженер":
-                    decrypted_Label.insert(0, f"    {i} - {deciphed[i]}")
+                    decrypted_label.insert(0, f"    {i} - {deciphed[i]}")
                 elif dropdownCipher.get() == "Рейл":
-                    decrypted_Label.insert(0, f"    {i + 2} - {deciphed[i]}")
+                    decrypted_label.insert(0, f"    {i + 2} - {deciphed[i]}")
                 else:
-                    decrypted_Label.insert(0, f"    {i + 1} - {deciphed[i]}")
+                    decrypted_label.insert(0, f"    {i + 1} - {deciphed[i]}")
 
-                decrypted_Label.configure(state="readonly")
+                decrypted_label.configure(state="readonly")
 
-                decrypted_Label.pack(anchor=NW,pady=5)
+                decrypted_label.pack(anchor=NW,pady=5)
 
-                manyDecrypted_Labels.append(decrypted_Label)
+                manyDecrypted_Labels.append(decrypted_label)
 
     elif len(deciphed) > 98:
 
-        decrypted_Label = CTkTextbox(window,
+        decrypted_label = CTkTextbox(window,
                          font=("Ariel", 40),
                          width=475,
                          height=300,
                          fg_color="#1c1c1c")
-        decrypted_Label.insert(INSERT, deciphed)
-        decrypted_Label.configure(state=DISABLED)
+        decrypted_label.insert(INSERT, deciphed)
+        decrypted_label.configure(state=DISABLED)
         
-        decrypted_Label.place(in_=button,relx=-1.0,rely=1.0,x=0,y=50)
+        decrypted_label.place(in_=button,relx=-1.0,rely=1.0,x=0,y=50)
 
 
     else:
 
-        decrypted_Label = CTkLabel(window,
+        decrypted_label = CTkLabel(window,
                          font=("Ariel", 40),
                          wraplength=420,
                          width=420,
@@ -411,42 +421,42 @@ def after_dec(deciphed:str|list):
                                 command=copy)
 
 
-        decrypted_Label.place(in_=button,relx=-1.0,rely=1.0,x=0,y=50)
-        copy_button.place(in_=decrypted_Label,relx=1.0,rely=0.95,x=0,y=0)
+        decrypted_label.place(in_=button,relx=-1.0,rely=1.0,x=0,y=50)
+        copy_button.place(in_=decrypted_label,relx=1.0,rely=0.95,x=0,y=0)
 
 
     navBar.lift()
     window.update()
 
 
-# copying the text when the copy button pressed
+# misc functions
 def copy():
 
     window.clipboard_clear()
-    window.clipboard_append(decrypted_Label.cget("text"))
-
+    window.clipboard_append(decrypted_label.cget("text"))
 
 def radiobutton_event():
     button.configure(state=NORMAL)
 
+def reveal_output():
+    os.system(f'start {os.path.realpath("spectrogram_files")}')
+
 # forgetting widgets
 def forget():
     try:
-        decrypted_Label.destroy()
+        decrypted_label.destroy()
         copy_button.destroy()
     except:
         pass
-
     manyFrame.place_forget()
 
     try:
-        for widget in manyDecrypted_Labels:
+        for widget in manyDecrypted_labels:
             widget.pack_forget()
     except:
         pass
 
 def forget_everything_ciphers():
-    forget()
 
     frame.pack_forget()
     cipherEntry.pack_forget()
@@ -464,9 +474,6 @@ def forget_everything_ciphers():
 
 
     button.unbind("<Return>")
-    
-def forget_everything_alphabets():
-    pass
 
 def forget_everything_systems():
     bin_radio.place_forget()
@@ -477,9 +484,17 @@ def forget_everything_systems():
     base85_radio.place_forget()
     button.place_forget()
 
+def forget_everything_alphabets():
+    pass
+
+def forget_everything_spectrs():
+    wav2img_button.place_forget()
+    img2wav_button.place_forget()
+    reveal_output_button.place_forget()
+
+
 # handling navbar things
 
-# handling navbar animation
 navBar_open = False
 def motion(event):
     global navBar_open
@@ -496,8 +511,10 @@ def motion(event):
 def navCiphers():
     global current_tab
     current_tab = "ciphers"
+    forget()
     forget_everything_alphabets()
     forget_everything_systems()
+    forget_everything_spectrs()
 
     cipherEntry.pack(anchor=NW)
     frame.pack(anchor=N,fill=BOTH)
@@ -509,8 +526,10 @@ def navCiphers():
 def navSystems():
     global current_tab
     current_tab = "systems"
+    forget()
     forget_everything_alphabets()
     forget_everything_ciphers()
+    forget_everything_spectrs()
 
     cipherEntry.pack(anchor=NW)
 
@@ -534,9 +553,30 @@ def navSystems():
 def navAlphabets():
     global current_tab
     current_tab = "alphabets"
+    forget()
     forget_everything_ciphers()
     forget_everything_systems()
+    forget_everything_spectrs()
 
+def navSpectrs():
+    global current_tab
+    current_tab = "spectrs"
+    forget()
+    forget_everything_ciphers()
+    forget_everything_systems()
+    forget_everything_spectrs()
+
+    img2wav_button.place(x=60,y=50)
+    wav2img_button.place(x=280,y=50)
+
+def img2wav():
+    pass
+def wav2img():
+    try:
+        wav2img_dec()
+        after_dec(image=True)
+    except:
+        pass
 # ---------------------------------------
 
 window = CTk()
@@ -760,6 +800,26 @@ navButtonAlphabets = CTkButton(navBar,
                                command=navAlphabets)
 navButtonAlphabets.pack(side=TOP)
 
+# ------------
+navButtonAlphabets = CTkButton(navBar,
+                               corner_radius=0,
+                               text="Спектрограммы",
+                               command=navSpectrs)
+navButtonAlphabets.pack(side=TOP)
+
+# spectrs widgets
+
+wav2img_button = CTkButton(window,
+                           text="WAV -> IMG",
+                           command=wav2img)
+
+img2wav_button = CTkButton(window,
+                           text="IMG -> WAV",
+                           command=img2wav)
+
+reveal_output_button = CTkButton(window,
+                               text="Открыть в папке",
+                               command=reveal_output)
 
 # --------------- tab widgets ---------------
 notes.lift()

@@ -5,7 +5,11 @@
 /__pycache__
 /ciphers/__pycache__
 /systems/__pycache__
+/spectrs/__pycache__
+/spectrogram_files/mono.wav
+/spectrogram_files/spectrogram.png
 /pyvenv.cfg
 /main.spec
 /commands.txt
 /.vscode
+/share
