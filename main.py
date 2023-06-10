@@ -489,7 +489,6 @@ def forget_everything_alphabets():
 
 def forget_everything_spectrs():
     wav2img_button.place_forget()
-    img2wav_button.place_forget()
     reveal_output_button.place_forget()
 
 
@@ -565,18 +564,14 @@ def navSpectrs():
     forget_everything_ciphers()
     forget_everything_systems()
     forget_everything_spectrs()
+    wav2img_button.place(x=160,y=50)
 
-    img2wav_button.place(x=60,y=50)
-    wav2img_button.place(x=280,y=50)
-
-def img2wav():
-    pass
 def wav2img():
     try:
         wav2img_dec()
         after_dec(image=True)
     except:
-        pass
+        after_dec("Bad file")
 # ---------------------------------------
 
 window = CTk()
@@ -812,10 +807,6 @@ navButtonAlphabets.pack(side=TOP)
 wav2img_button = CTkButton(window,
                            text="WAV -> IMG",
                            command=wav2img)
-
-img2wav_button = CTkButton(window,
-                           text="IMG -> WAV",
-                           command=img2wav)
 
 reveal_output_button = CTkButton(window,
                                text="Открыть в папке",
