@@ -77,6 +77,7 @@ def check(event):
             dropdownLanguage.configure(values=whatLang)
         
         case "A1Z26":
+
             if dropdownLanguage.get() != "Язык?":
                 button.configure(state=NORMAL)
 
@@ -89,6 +90,7 @@ def check(event):
             dropdownLanguage.configure(values=whatLang)
 
         case "Рейл":
+
             button.configure(state=NORMAL)
             checkbox.configure(text="All")
 
@@ -139,6 +141,7 @@ def check(event):
             dropdownRots.grid(row=0,column=2,padx=15,pady=20)
             
         case "Хилл":
+
             button.configure(state=NORMAL)
 
             dropdownLanguage.configure(values=whatLangCut)
@@ -306,7 +309,7 @@ def decipher(*event):
 
 
         case "systems":
-            match radio_var.get():
+            match SYSradio_var.get():
 
                 case "bin (2)":
 
@@ -435,11 +438,6 @@ def copy():
     window.clipboard_clear()
     window.clipboard_append(decrypted_label.cget("text"))
 
-def radiobutton_event():
-    button.configure(state=NORMAL)
-
-def reveal_output():
-    os.system(f'start {os.path.realpath("spectrogram_files")}')
 
 # forgetting widgets
 def forget():
@@ -485,15 +483,26 @@ def forget_everything_systems():
     button.place_forget()
 
 def forget_everything_alphabets():
-    pass
+    wingdings_radio.place_forget()
+    ALPoutput.place_forget()
+    try:
+        for widget in qw_keyboard_buttons:
+            widget.place_forget()
+        for widget in ot_keyboard_buttons:
+            widget.place_forget()
+    except:
+        pass
+    qwerty_frame.place_forget()
+    otherKeys_frame.place_forget()
+    qwerty_label.place_forget()
+    others_label
 
 def forget_everything_spectrs():
     wav2img_button.place_forget()
     reveal_output_button.place_forget()
 
 
-# handling navbar things
-
+# handling navbar animation
 navBar_open = False
 def motion(event):
     global navBar_open
@@ -507,6 +516,7 @@ def motion(event):
         navBar.animate_forward()
 
 
+# ciphers tab
 def navCiphers():
     global current_tab
     current_tab = "ciphers"
@@ -522,6 +532,8 @@ def navCiphers():
 
     check(dropdownCipher.get())
 
+
+# systems tab
 def navSystems():
     global current_tab
     current_tab = "systems"
@@ -542,13 +554,18 @@ def navSystems():
     button.place(x=170,y=175)
     window.bind("<Return>", decipher)
 
-    if radio_var.get() != "":
+    if SYSradio_var.get() != "":
         button.configure(state=NORMAL)
     else:
         button.configure(state=DISABLED)
 
     navBar.lift()
 
+def SYSradiobutton_event():
+    button.configure(state=NORMAL)
+
+
+# alphabets tab
 def navAlphabets():
     global current_tab
     current_tab = "alphabets"
@@ -557,6 +574,59 @@ def navAlphabets():
     forget_everything_systems()
     forget_everything_spectrs()
 
+    wingdings_radio.place(x=25,y=20)
+    
+
+    ALPoutput.place(x=25,y=60)
+
+    qwerty_label.place(x=175,y=215)
+    qwerty_frame.place(x=25,y=250)
+    others_label.place(x=210,y=560)
+    otherKeys_frame.place(x=26,y=450)
+
+def ALPradiobutton_event():
+    global qw_keyboard_buttons, ot_keyboard_buttons
+    match ALPradio_var.get():
+        case "GWD":
+            qw_keyboard_buttons = []
+            for i, qw_key_row in enumerate(qwerty_keyboard):
+                for j, qw_key in enumerate(qw_key_row):
+
+                    qw_keyboard_button = CTkButton(qwerty_frame,
+                                                width=45,
+                                                height=45,
+                                                command=lambda qw_key=qw_key: ALPbutton_event(qw_key),
+                                                corner_radius=0,
+                                                fg_color="black",
+                                                font=("Wingdings", 26),
+                                                text=qw_key)
+                    qw_keyboard_button.grid_propagate(False)
+                    qw_keyboard_button.grid(row=i,column=j)
+
+                    qw_keyboard_buttons.append(qw_keyboard_button)
+
+            ot_keyboard_buttons = []
+            for i, ot_key_row in enumerate(others_keyboard):
+
+                for j, ot_key in enumerate(ot_key_row):
+
+                    ot_keyboard_button = CTkButton(otherKeys_frame,
+                                                width=32,
+                                                height=50,
+                                                command=lambda ot_key=ot_key: ALPbutton_event(ot_key),
+                                                corner_radius=0,
+                                                fg_color="black",
+                                                font=("Wingdings", 24),
+                                                text=ot_key)
+                    ot_keyboard_button.grid_propagate(False)
+                    ot_keyboard_button.grid(row=i,column=j)
+
+                    ot_keyboard_buttons.append(ot_keyboard_button)
+def ALPbutton_event(key):
+    ALPoutput.insert(INSERT, key)
+
+
+# spectrs tab
 def navSpectrs():
     global current_tab
     current_tab = "spectrs"
@@ -572,6 +642,8 @@ def wav2img():
         after_dec(image=True)
     except:
         after_dec("Bad file")
+def reveal_output():
+    os.system(f'start {os.path.realpath("spectrogram_files")}')
 # ---------------------------------------
 
 window = CTk()
@@ -581,8 +653,7 @@ window.resizable(False, False)
 
 current_tab = "ciphers"
 # ---------------------------------------
-# general widgets
-
+#region of widgets
 # the main entry at the top
 cipherEntry = CTkEntry(window,
                     font=("Arial", 20),
@@ -749,44 +820,44 @@ navButtonSystems.pack(side=TOP)
 
 # systems widgets
 
-radio_var = StringVar()
+SYSradio_var = StringVar()
 bin_radio = CTkRadioButton(window,
                            text="bin (2)",
                            value="bin (2)",
                            font=("Ariel", 20),
-                           variable=radio_var,
-                           command=radiobutton_event)
+                           variable=SYSradio_var,
+                           command=SYSradiobutton_event)
 oct_radio = CTkRadioButton(window,
                            text="oct (8)",
                            value="oct (8)",
                            font=("Ariel", 20),
-                           variable=radio_var,
-                           command=radiobutton_event)
+                           variable=SYSradio_var,
+                           command=SYSradiobutton_event)
 hex_radio = CTkRadioButton(window,
                            text="hex (16)",
                            value="hex (16)",
                            font=("Ariel", 20),
-                           variable=radio_var,
-                           command=radiobutton_event)
+                           variable=SYSradio_var,
+                           command=SYSradiobutton_event)
 base32_radio = CTkRadioButton(window,
                               text="base32",
                               value="base32",
                               font=("Ariel", 20),
-                              variable=radio_var,
-                              command=radiobutton_event)
+                              variable=SYSradio_var,
+                              command=SYSradiobutton_event)
 base64_radio = CTkRadioButton(window,
                               text="base64",
                               value="base64",
                               font=("Ariel", 20),
-                              variable=radio_var,
-                              command=radiobutton_event)
+                              variable=SYSradio_var,
+                              command=SYSradiobutton_event)
 
 base85_radio = CTkRadioButton(window,
                               text="base85",
                               value="base85",
                               font=("Ariel", 20),
-                              variable=radio_var,
-                              command=radiobutton_event)
+                              variable=SYSradio_var,
+                              command=SYSradiobutton_event)
 
 # ------------
 navButtonAlphabets = CTkButton(navBar,
@@ -802,6 +873,39 @@ navButtonAlphabets = CTkButton(navBar,
                                command=navSpectrs)
 navButtonAlphabets.pack(side=TOP)
 
+# alphabets widgets
+
+ALPradio_var = StringVar()
+wingdings_radio = CTkRadioButton(window,
+                              text="Gaster wingdings",
+                              value="GWD",
+                              font=("Ariel", 20),
+                              variable=ALPradio_var,
+                              command=ALPradiobutton_event)
+
+ALPoutput = CTkTextbox(window,
+                   font=("Ariel", 30),
+                   width=450,
+                   height=150)
+
+qwerty_label = CTkLabel(window,
+                        font=("Ariel", 30),
+                        text="QWERTY")
+
+qwerty_frame = CTkFrame(window,
+                        width=450,
+                        height=180)
+qwerty_frame.grid_propagate(False)
+
+others_label = CTkLabel(window,
+                        font=("Ariel", 30),
+                        text="Other")
+
+otherKeys_frame = CTkFrame(window,
+                           width=450,
+                           height=100)
+qwerty_frame.grid_propagate(False)
+
 # spectrs widgets
 
 wav2img_button = CTkButton(window,
@@ -815,6 +919,6 @@ reveal_output_button = CTkButton(window,
 # --------------- tab widgets ---------------
 notes.lift()
 navBar.lift()
-
+#endregion
 
 window.mainloop()
