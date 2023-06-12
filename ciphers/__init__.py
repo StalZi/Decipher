@@ -6,3 +6,4 @@ from ciphers.playfair_file import playfair_dec
 from ciphers.hill_file import hill_dec
 from ciphers.rail_fence_file import rail_fence_dec
 from ciphers.morse_file import morse_dec
+from ciphers.polybius_file import polybius_dec

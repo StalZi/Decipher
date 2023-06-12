@@ -11,7 +11,7 @@ from systems import *
 from spectrs import *
 
 
-VERSION = "1.6"
+VERSION = "1.7"
 
 set_appearance_mode("dark")
 set_default_color_theme("green")
@@ -30,8 +30,13 @@ def check(event) -> None:
         except:
             pass
 
+        dropdownLanguage.grid_forget()
+        dropdownRots.grid_forget()
+        keyEntry1.grid_forget()
         keyEntry_morse2.grid_forget()
         keyEntry_morse3.place_forget()
+        alphabetEntry.grid_forget()
+
 
     else:
         button.configure(state=DISABLED)
@@ -54,12 +59,11 @@ def check(event) -> None:
 
             if dropdownLanguage.get() != "Язык?":
                 dropdownRots.configure(state=NORMAL)
-                if dropdownLanguage.get() == "Russian" or dropdownLanguage.get() == "Все, что ниже":
+                if dropdownLanguage.get() == "Русский" or dropdownLanguage.get() == "Все, что ниже":
                     dropdownRots.configure(values=RotsRU)
                 else:
                     dropdownRots.configure(values=RotsEN)
 
-            keyEntry1.grid_forget()
             dropdownLanguage.configure(values=whatLang)
 
             dropdownLanguage.grid(row=0,column=1,padx=15,pady=20)
@@ -70,10 +74,7 @@ def check(event) -> None:
             if dropdownLanguage.get() != "Язык?":
                 button.configure(state=NORMAL)
 
-            dropdownRots.grid_forget()
-            keyEntry1.grid_forget()
-
-            dropdownLanguage.grid(row=0,column=1)
+            dropdownLanguage.grid(row=0,column=1,padx=15,pady=20)
             dropdownLanguage.configure(values=whatLang)
         
         case "A1Z26":
@@ -82,10 +83,8 @@ def check(event) -> None:
                 button.configure(state=NORMAL)
 
             checkbox.configure(text="A2Z52")
-            dropdownRots.grid_forget()
-            keyEntry1.grid_forget()
 
-            dropdownLanguage.grid(row=0,column=1)
+            dropdownLanguage.grid(row=0,column=1,padx=15,pady=20)
             checkbox.place(in_=dropdownLanguage,relx=1.0,rely=0,x=10,y=0)
             dropdownLanguage.configure(values=whatLang)
 
@@ -93,10 +92,6 @@ def check(event) -> None:
 
             button.configure(state=NORMAL)
             checkbox.configure(text="All")
-
-            dropdownLanguage.grid_forget()
-            dropdownRots.grid_forget()
-            keyEntry1.grid_forget()
 
             keyEntry1.configure(width=100)
             keyEntry1.grid(row=0,column=1,padx=10,pady=20)
@@ -107,11 +102,11 @@ def check(event) -> None:
         
         case "Плейфер":
 
-            dropdownRots.grid_forget()
             dropdownLanguage.set("English")
             dropdownLanguage.configure(state=DISABLED)
             button.configure(state=NORMAL)
 
+            dropdownLanguage.grid(row=0,column=1,padx=15,pady=20)
             keyEntry1.grid(row=1,column=1,pady=8)
 
         case "Виженер":
@@ -149,11 +144,9 @@ def check(event) -> None:
                 dropdownLanguage.set("Язык?")
                 dropdownRots.configure(state=DISABLED)
                 button.configure(state=DISABLED)
+                
 
-            dropdownRots.grid_forget()
-            keyEntry1.grid_forget()
-
-            dropdownLanguage.grid(row=0,column=1)
+            dropdownLanguage.grid(row=0,column=1,padx=15,pady=20)
 
             matrix_title.place(x=200,y=100)
             matrix_label.place(x=130,y=135)
@@ -168,21 +161,32 @@ def check(event) -> None:
             button.configure(state=NORMAL)
             dropdownLanguage.set("English")
             dropdownLanguage.configure(state=DISABLED)
-            dropdownRots.grid(row=0,column=2,padx=15,pady=20)
 
-            dropdownRots.grid_forget()
-            keyEntry1.grid_forget()
+            dropdownLanguage.grid(row=0,column=1,padx=15,pady=20)
             keyEntry_morse2.grid(row=1,columnspan=2,pady=8)
             keyEntry_morse3.place(in_=keyEntry_morse2,relx=1.0,rely=0,x=110,y=0)
+
+        case "Полибиус":
+            button.configure(state=NORMAL)
+
+            if dropdownLanguage.get() == "Русский":
+                alphabetText.set("АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ")
+            elif dropdownLanguage.get() == "English":
+                alphabetText.set("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+            else:
+                dropdownLanguage.set("Язык?")
+            dropdownLanguage.configure(values=whatLangCut)
+            keyEntry1.configure(state=NORMAL)
+
+            dropdownLanguage.grid(row=0,column=1,padx=15,pady=20)
+            keyEntry1.grid(row=1,column=0,pady=8)
+            alphabetEntry.grid(row=1,column=1)
 
 
     window.update()
 
 # handling language selection
 def checkLanguage(event) -> None:
-
-    global RotsEN
-    global RotsRU
     
     match dropdownCipher.get():
         case "Виженер":
@@ -191,7 +195,6 @@ def checkLanguage(event) -> None:
             dropdownRots.configure(state=NORMAL)
 
             window.update()
-            return
         
         case "Цезарь":
 
@@ -204,14 +207,18 @@ def checkLanguage(event) -> None:
             dropdownRots.configure(state=NORMAL)
 
             window.update()
-            return
         
         case "Атбаш" | "A1Z26":
 
             button.configure(state=NORMAL)
 
             window.update()
-            return
+        
+        case "Полибиус":
+            if dropdownLanguage.get() == "Русский":
+                alphabetText.set("АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ")
+            else:
+                alphabetText.set("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 # handling rot selection
 def checkRot(event) -> None:
@@ -307,6 +314,12 @@ def decipher(*event) -> None:
                     except:
                         after_dec("Bad symbols, the key entries should announce what dash and dot are (default = '-' and '.')")
 
+                case "Полибиус" if alphabetText.get() != "":
+                    try:
+                        after_dec(polybius_dec(cipherEntry.get(), alphabetText.get(), keyText1.get()))
+                    except:
+                        after_dec("Bad symbols, first entry is the alphabet and the second one is an optional key")
+
 
         case "systems":
             match SYSradio_var.get():
@@ -399,10 +412,10 @@ def after_dec(*deciphed:str|list, image:bool = False) -> None:
     elif len(deciphed) > 98:
 
         decrypted_label = CTkTextbox(window,
-                         font=("Ariel", 40),
-                         width=475,
-                         height=300,
-                         fg_color="#1c1c1c")
+                                     font=("Ariel", 40),
+                                     width=475,
+                                     height=300,
+                                     fg_color="#1c1c1c")
         decrypted_label.insert(INSERT, deciphed)
         decrypted_label.configure(state=DISABLED)
         
@@ -412,11 +425,11 @@ def after_dec(*deciphed:str|list, image:bool = False) -> None:
     else:
 
         decrypted_label = CTkLabel(window,
-                         font=("Ariel", 40),
-                         wraplength=420,
-                         width=420,
-                         compound=CENTER,
-                         text=deciphed)
+                                   font=("Ariel", 40),
+                                   wraplength=420,
+                                   width=420,
+                                   compound=CENTER,
+                                   text=deciphed)
 
         copy_button = CTkButton(window,
                                 text="Copy",
@@ -495,7 +508,7 @@ def forget_everything_alphabets() -> None:
     qwerty_frame.place_forget()
     otherKeys_frame.place_forget()
     qwerty_label.place_forget()
-    others_label
+    others_label.place_forget()
 
 def forget_everything_spectrs() -> None:
     wav2img_button.place_forget()
@@ -716,10 +729,8 @@ dropdownCipher.grid(row=0,column=0,padx=10,pady=20)
 # the language selection menu
 dropdownLanguage = CTkOptionMenu(frame,
                          values=None,
-                         command=checkLanguage,
-                         state=DISABLED)
+                         command=checkLanguage)
 dropdownLanguage.set("Язык?")
-dropdownLanguage.grid(row=0,column=1,padx=15,pady=20)
 
 # the rots selection menu
 dropdownRots = CTkOptionMenu(frame,
@@ -785,11 +796,17 @@ matrix_text3.trace("w", lambda *args: character_limit1(matrix_text3))
 matrix_text4.trace("w", lambda *args: character_limit1(matrix_text4))
 
 # key entrys for different ciphers
+alphabetText = StringVar()
 keyText1 = StringVar()
 keyText_morse2 = StringVar()
 keyText_morse3 = StringVar()
 keyText_morse2.set("-")
 keyText_morse3.set(".")
+
+alphabetEntry = CTkEntry(frame,
+                         font=("Arial",15),
+                         textvariable=alphabetText,
+                         width=200)
 
 keyEntry1 = CTkEntry(frame,
                      font=("Arial",15),
