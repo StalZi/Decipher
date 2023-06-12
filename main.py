@@ -18,7 +18,7 @@ set_default_color_theme("green")
 
 
 # handling cipher selection
-def check(event):
+def check(event) -> None:
     if event != "Шифр?":
         global keyText_trace_id
 
@@ -179,7 +179,7 @@ def check(event):
     window.update()
 
 # handling language selection
-def checkLanguage(event):
+def checkLanguage(event) -> None:
 
     global RotsEN
     global RotsRU
@@ -214,12 +214,12 @@ def checkLanguage(event):
             return
 
 # handling rot selection
-def checkRot(event):
+def checkRot(event) -> None:
 
     button.configure(state=NORMAL)
 
 # handling checkbox ticking in rail fence
-def checkCheckbox():
+def checkCheckbox() -> None:
 
     match dropdownCipher.get():
     
@@ -236,7 +236,7 @@ def checkCheckbox():
 
 
 # handling pressing the decrypt button
-def decipher(*event):
+def decipher(*event) -> None:
     if button.cget('state') == DISABLED:
         return
     
@@ -357,7 +357,7 @@ def decipher(*event):
                     return
 
 # showing decrypted message properly
-def after_dec(*deciphed:str|list, image:bool = False):
+def after_dec(*deciphed:str|list, image:bool = False) -> None:
     global decrypted_label, copy_button, manyDecrypted_labels
 
     if image:
@@ -433,14 +433,14 @@ def after_dec(*deciphed:str|list, image:bool = False):
 
 
 # misc functions
-def copy():
+def copy() -> None:
 
     window.clipboard_clear()
     window.clipboard_append(decrypted_label.cget("text"))
 
 
 # forgetting widgets
-def forget():
+def forget() -> None:
     try:
         decrypted_label.destroy()
         copy_button.destroy()
@@ -454,7 +454,7 @@ def forget():
     except:
         pass
 
-def forget_everything_ciphers():
+def forget_everything_ciphers() -> None:
 
     frame.pack_forget()
     cipherEntry.pack_forget()
@@ -473,7 +473,7 @@ def forget_everything_ciphers():
 
     button.unbind("<Return>")
 
-def forget_everything_systems():
+def forget_everything_systems() -> None:
     bin_radio.place_forget()
     oct_radio.place_forget()
     hex_radio.place_forget()
@@ -482,7 +482,7 @@ def forget_everything_systems():
     base85_radio.place_forget()
     button.place_forget()
 
-def forget_everything_alphabets():
+def forget_everything_alphabets() -> None:
     wingdings_radio.place_forget()
     ALPoutput.place_forget()
     try:
@@ -497,14 +497,14 @@ def forget_everything_alphabets():
     qwerty_label.place_forget()
     others_label
 
-def forget_everything_spectrs():
+def forget_everything_spectrs() -> None:
     wav2img_button.place_forget()
     reveal_output_button.place_forget()
 
 
 # handling navbar animation
 navBar_open = False
-def motion(event):
+def motion(event) -> None:
     global navBar_open
     
     if window.winfo_pointerx() - window.winfo_rootx() > 200:
@@ -517,7 +517,7 @@ def motion(event):
 
 
 # ciphers tab
-def navCiphers():
+def navCiphers() -> None:
     global current_tab
     current_tab = "ciphers"
     forget()
@@ -534,7 +534,7 @@ def navCiphers():
 
 
 # systems tab
-def navSystems():
+def navSystems() -> None:
     global current_tab
     current_tab = "systems"
     forget()
@@ -561,12 +561,12 @@ def navSystems():
 
     navBar.lift()
 
-def SYSradiobutton_event():
+def SYSradiobutton_event() -> None:
     button.configure(state=NORMAL)
 
 
 # alphabets tab
-def navAlphabets():
+def navAlphabets() -> None:
     global current_tab
     current_tab = "alphabets"
     forget()
@@ -584,8 +584,9 @@ def navAlphabets():
     others_label.place(x=210,y=560)
     otherKeys_frame.place(x=26,y=450)
 
-def ALPradiobutton_event():
+def ALPradiobutton_event() -> None:
     global qw_keyboard_buttons, ot_keyboard_buttons
+    
     match ALPradio_var.get():
         case "GWD":
             qw_keyboard_buttons = []
@@ -593,13 +594,13 @@ def ALPradiobutton_event():
                 for j, qw_key in enumerate(qw_key_row):
 
                     qw_keyboard_button = CTkButton(qwerty_frame,
-                                                width=45,
-                                                height=45,
-                                                command=lambda qw_key=qw_key: ALPbutton_event(qw_key),
-                                                corner_radius=0,
-                                                fg_color="black",
-                                                font=("Wingdings", 26),
-                                                text=qw_key)
+                                                   width=45,
+                                                   height=45,
+                                                   command=lambda qw_key=qw_key: ALPbutton_event(qw_key),
+                                                   corner_radius=0,
+                                                   fg_color="black",
+                                                   font=("Wingdings", 26),
+                                                   text=qw_key)
                     qw_keyboard_button.grid_propagate(False)
                     qw_keyboard_button.grid(row=i,column=j)
 
@@ -622,27 +623,27 @@ def ALPradiobutton_event():
                     ot_keyboard_button.grid(row=i,column=j)
 
                     ot_keyboard_buttons.append(ot_keyboard_button)
-def ALPbutton_event(key):
+def ALPbutton_event(key) -> None:
     ALPoutput.insert(INSERT, key)
 
 
 # spectrs tab
-def navSpectrs():
+def navSpectrs() -> None:
     global current_tab
     current_tab = "spectrs"
     forget()
     forget_everything_ciphers()
     forget_everything_systems()
-    forget_everything_spectrs()
+    forget_everything_alphabets()
     wav2img_button.place(x=160,y=50)
 
-def wav2img():
+def wav2img() -> None:
     try:
         wav2img_dec()
         after_dec(image=True)
     except:
         after_dec("Bad file")
-def reveal_output():
+def reveal_output() -> None:
     os.system(f'start {os.path.realpath("spectrogram_files")}')
 # ---------------------------------------
 

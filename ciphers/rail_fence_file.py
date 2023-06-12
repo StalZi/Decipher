@@ -1,4 +1,4 @@
-def decryptRailFence(cipher, key):
+def decryptRailFence(cipher:str, key:int) -> str:
 
     rail = [['\n' for i in range(len(cipher))]
                 for j in range(key)]
@@ -50,7 +50,7 @@ def decryptRailFence(cipher, key):
     return("".join(result))
 
 
-def rail_fence_dec(value:str, key:int|str):
+def rail_fence_dec(value:str, key:int|str) -> str:
     
     if key == "All":
         all_nums = []

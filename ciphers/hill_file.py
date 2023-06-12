@@ -19,7 +19,7 @@ def matrix_mod_inv(matrix, modulus):
 
     return matrix_modulus_inv
 
-def decryptEN(cipher, Kinv):
+def decryptEN(cipher:str, Kinv) -> str:
     decrypted = ""
     cipher_in_numbers = []
 
@@ -44,7 +44,7 @@ def decryptEN(cipher, Kinv):
     return decrypted
 
 
-def decryptRU(cipher, Kinv):
+def decryptRU(cipher:str, Kinv) -> str:
     decrypted = ""
     cipher_in_numbers = []
 
@@ -68,7 +68,7 @@ def decryptRU(cipher, Kinv):
     return decrypted
 
 
-def hill_dec(language:str, value:str, key:list):
+def hill_dec(language:str, value:str, key:list) -> str:
 
     K = np.matrix(key)
 
