@@ -96,7 +96,7 @@ def check(event) -> None:
             keyEntry1.configure(width=100)
             keyEntry1.grid(row=0,column=1,padx=10,pady=20)
 
-            keyText_trace_id = keyText1.trace("w", lambda *args: character_limit3(keyText1))
+            keyText_trace_id = keyText1.trace("w", lambda *args: character_limit(keyText1, 3))
 
             checkbox.place(in_=keyEntry1,relx=1.0,rely=0,x=10,y=0)
         
@@ -790,10 +790,10 @@ matrix4 = CTkEntry(window,
                     placeholder_text="5")
 matrix4.insert(0, "5")
 
-matrix_text1.trace("w", lambda *args: character_limit1(matrix_text1))
-matrix_text2.trace("w", lambda *args: character_limit1(matrix_text2))
-matrix_text3.trace("w", lambda *args: character_limit1(matrix_text3))
-matrix_text4.trace("w", lambda *args: character_limit1(matrix_text4))
+matrix_text1.trace("w", lambda *args: character_limit(matrix_text1, 2))
+matrix_text2.trace("w", lambda *args: character_limit(matrix_text2, 2))
+matrix_text3.trace("w", lambda *args: character_limit(matrix_text3, 2))
+matrix_text4.trace("w", lambda *args: character_limit(matrix_text4, 2))
 
 # key entrys for different ciphers
 alphabetText = StringVar()
