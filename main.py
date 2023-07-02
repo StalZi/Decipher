@@ -1,6 +1,6 @@
 from customtkinter import *
 from PIL import Image
-import os
+from os import system, path
 
 from options import *
 from char_lim import *
@@ -657,10 +657,10 @@ def wav2img() -> None:
     except:
         after_dec("Bad file")
 def reveal_output() -> None:
-    os.system(f'start {os.path.realpath("spectrogram_files")}')
+    system(f'start {path.realpath("spectrogram_files")}')
 # ---------------------------------------
 
-window = CTk()
+window = CTk(fg_color='black')
 window.title(f"Decipher by StalZi {VERSION}")
 window.geometry("800x600")
 window.resizable(False, False)
@@ -670,10 +670,10 @@ current_tab = "ciphers"
 #region of widgets
 # the main entry at the top
 cipherEntry = CTkEntry(window,
-                    font=("Arial", 20),
-                    width=500,
-                    placeholder_text="Cipher",
-                    corner_radius=0)
+                       font=("Arial", 20),
+                       width=500,
+                       placeholder_text="Cipher",
+                       corner_radius=0)
 cipherEntry.pack(anchor=NW)
 
 # the main decrypt button
@@ -707,9 +707,9 @@ window.bind("<Motion>", motion)
 # --------------- tab widgets ---------------
 # default tab
 navButtonCiphers = CTkButton(navBar,
-                      corner_radius=0,
-                      text="Шифры",
-                      command=navCiphers)
+                             corner_radius=0,
+                             text="Шифры",
+                             command=navCiphers)
 navButtonCiphers.pack(side=TOP)
 
 # ciphers widgets
@@ -721,22 +721,22 @@ frame.pack(anchor=N,fill=BOTH)
 
 # the cipher selection menu
 dropdownCipher = CTkOptionMenu(frame,
-                         values=options,
-                         command=check)
+                               values=options,
+                               command=check)
 dropdownCipher.set("Шифр?")
 dropdownCipher.grid(row=0,column=0,padx=10,pady=20)
 
 # the language selection menu
 dropdownLanguage = CTkOptionMenu(frame,
-                         values=None,
-                         command=checkLanguage)
+                                 values=None,
+                                 command=checkLanguage)
 dropdownLanguage.set("Язык?")
 
 # the rots selection menu
 dropdownRots = CTkOptionMenu(frame,
-                         values=None,
-                         command=checkRot,
-                         state=DISABLED)
+                             values=None,
+                             command=checkRot,
+                             state=DISABLED)
 dropdownRots.set("ROT?")
 
 # the checkbox for the rail fence cipher
@@ -763,31 +763,31 @@ matrix_text3 = StringVar()
 matrix_text4 = StringVar()
 
 matrix1 = CTkEntry(window,
-                    font=("Arial",15),
-                    textvariable=matrix_text1,
-                    width=30,
-                    placeholder_text="3")
+                   font=("Arial",15),
+                   textvariable=matrix_text1,
+                   width=30,
+                   placeholder_text="3")
 matrix1.insert(0, "3")
 
 matrix2 = CTkEntry(window,
-                    font=("Arial",15),
-                    textvariable=matrix_text2,
-                    width=30,
-                    placeholder_text="3")
+                   font=("Arial",15),
+                   textvariable=matrix_text2,
+                   width=30,
+                   placeholder_text="3")
 matrix2.insert(0, "3")
 
 matrix3 = CTkEntry(window,
-                    font=("Arial",15),
-                    textvariable=matrix_text3,
-                    width=30,
-                    placeholder_text="2")
+                   font=("Arial",15),
+                   textvariable=matrix_text3,
+                   width=30,
+                   placeholder_text="2")
 matrix3.insert(0, "2")
 
 matrix4 = CTkEntry(window,
-                    font=("Arial",15),
-                    textvariable=matrix_text4,
-                    width=30,
-                    placeholder_text="5")
+                   font=("Arial",15),
+                   textvariable=matrix_text4,
+                   width=30,
+                   placeholder_text="5")
 matrix4.insert(0, "5")
 
 matrix_text1.trace("w", lambda *args: character_limit(matrix_text1, 2))
@@ -831,9 +831,9 @@ manyFrame = CTkScrollableFrame(window,
 
 # ----------
 navButtonSystems = CTkButton(navBar,
-                      corner_radius=0,
-                      text="Системы",
-                      command=navSystems)
+                             corner_radius=0,
+                             text="Системы",
+                             command=navSystems)
 navButtonSystems.pack(side=TOP)
 
 # systems widgets
@@ -895,16 +895,16 @@ navButtonAlphabets.pack(side=TOP)
 
 ALPradio_var = StringVar()
 wingdings_radio = CTkRadioButton(window,
-                              text="Gaster wingdings",
-                              value="GWD",
-                              font=("Ariel", 20),
-                              variable=ALPradio_var,
-                              command=ALPradiobutton_event)
+                                 text="Gaster wingdings",
+                                 value="GWD",
+                                 font=("Ariel", 20),
+                                 variable=ALPradio_var,
+                                 command=ALPradiobutton_event)
 
 ALPoutput = CTkTextbox(window,
-                   font=("Ariel", 30),
-                   width=450,
-                   height=150)
+                       font=("Ariel", 30),
+                       width=450,
+                       height=150)
 
 qwerty_label = CTkLabel(window,
                         font=("Ariel", 30),
@@ -931,8 +931,8 @@ wav2img_button = CTkButton(window,
                            command=wav2img)
 
 reveal_output_button = CTkButton(window,
-                               text="Открыть в папке",
-                               command=reveal_output)
+                                 text="Открыть в папке",
+                                 command=reveal_output)
 
 # --------------- tab widgets ---------------
 notes.lift()
